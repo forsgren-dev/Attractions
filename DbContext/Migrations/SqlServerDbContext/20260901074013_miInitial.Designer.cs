@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DbContext.Migrations.mysqlDbContext
+namespace DbContext.Migrations.SqlServerDbContext
 {
-    [DbContext(typeof(MainDbContext.MySqlDbContext))]
-    [Migration("20260730133809_miInitial")]
+    [DbContext(typeof(MainDbContext.SqlServerDbContext))]
+    [Migration("20260901074013_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -21,25 +21,22 @@ namespace DbContext.Migrations.mysqlDbContext
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DbModels.QuoteDbM", b =>
+            modelBuilder.Entity("DbModels.AttractionDbM", b =>
                 {
-                    b.Property<Guid>("QuoteId")
+                    b.Property<Guid>("AttractionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Author")
+                    b.Property<string>("AttractionName")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("QuoteText")
-                        .HasColumnType("varchar(200)");
+                    b.HasKey("AttractionId");
 
-                    b.HasKey("QuoteId");
-
-                    b.ToTable("Quotes");
+                    b.ToTable("Attractions");
                 });
 #pragma warning restore 612, 618
         }
