@@ -9,14 +9,19 @@ namespace DbModels;
 
 public class AttractionDbM : Attraction
 {
-    
- [Key]
+
+    [Key]
     public override Guid AttractionId { get; set; }
 
-}
-   
+    #region constructor
+    public AttractionDbM() { }
 
-    
+    #endregion
+
+}
+
+
+
 
 
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260901074013_miInitial")]
+    [Migration("20260901074356_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -37,6 +37,34 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("AttractionId");
 
                     b.ToTable("Attractions");
+                });
+
+            modelBuilder.Entity("DbModels.CityDbM", b =>
+                {
+                    b.Property<Guid>("CityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CityName")
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("CityId");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("DbModels.CountryDbM", b =>
+                {
+                    b.Property<Guid>("CountryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CountryName")
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("CountryId");
+
+                    b.ToTable("Countries");
                 });
 #pragma warning restore 612, 618
         }

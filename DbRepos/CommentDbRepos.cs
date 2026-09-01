@@ -9,10 +9,10 @@ using Configuration;
 
 namespace DbRepos;
 
-public class AdminDbRepos
+public class CommentDbRepos
 {
     private const string _seedSource = "./app-seeds.json";
-    private readonly ILogger<AdminDbRepos> _logger;
+    private readonly ILogger<CommentDbRepos> _logger;
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
@@ -29,8 +29,8 @@ public class AdminDbRepos
     //     await _dbContext.SaveChangesAsync();
     // }
 
-    public AdminDbRepos(
-        ILogger<AdminDbRepos> logger,
+    public CommentDbRepos(
+        ILogger<CommentDbRepos> logger,
         Encryptions encryptions,
         MainDbContext context)
     {
