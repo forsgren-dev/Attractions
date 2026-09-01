@@ -26,6 +26,8 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     #region C# model of database tables
     
     public DbSet<AttractionDbM> Attractions { get; set; }
+    public DbSet<CityDbM> Cities { get; set; }
+    public DbSet<CountryDbM> Countries { get; set; }
     #endregion
 
     #region constructors
