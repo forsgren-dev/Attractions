@@ -10,10 +10,19 @@ namespace DbModels;
 
 public class CommentDbM : Comment
 {
-    
- [Key]
+    [Key]
     public override Guid CommentId { get; set; }
 
+    [NotMapped]
+    public override IAttraction Attraction
+    {
+        get => AttractionDbM;
+        set => AttractionDbM = (AttractionDbM)value;
+    }
+
+    public Guid AttractionId { get; set; }
+
+    public AttractionDbM AttractionDbM { get; set; }
 }
    
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260901103836_miInitial")]
+    [Migration("20260901114001_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -53,6 +53,25 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("DbModels.CommentDbM", b =>
+                {
+                    b.Property<Guid>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AttractionDbMAttractionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CommentText")
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("AttractionDbMAttractionId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("DbModels.CountryDbM", b =>
                 {
                     b.Property<Guid>("CountryId")
@@ -65,6 +84,20 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("CountryId");
 
                     b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("DbModels.CommentDbM", b =>
+                {
+                    b.HasOne("DbModels.AttractionDbM", "AttractionDbM")
+                        .WithMany("CommentDbM")
+                        .HasForeignKey("AttractionDbMAttractionId");
+
+                    b.Navigation("AttractionDbM");
+                });
+
+            modelBuilder.Entity("DbModels.AttractionDbM", b =>
+                {
+                    b.Navigation("CommentDbM");
                 });
 #pragma warning restore 612, 618
         }

@@ -46,19 +46,45 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     table.PrimaryKey("PK_Countries", x => x.CountryId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CommentText = table.Column<string>(type: "varchar(200)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                    table.ForeignKey(
+                        name: "FK_Comments_Attractions_AttractionDbMAttractionId",
+                        column: x => x.AttractionDbMAttractionId,
+                        principalTable: "Attractions",
+                        principalColumn: "AttractionId");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_AttractionDbMAttractionId",
+                table: "Comments",
+                column: "AttractionDbMAttractionId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Attractions");
-
-            migrationBuilder.DropTable(
                 name: "Cities");
 
             migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "Countries");
+
+            migrationBuilder.DropTable(
+                name: "Attractions");
         }
     }
 }
