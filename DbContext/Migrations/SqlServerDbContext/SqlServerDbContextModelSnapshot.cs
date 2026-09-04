@@ -74,6 +74,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("AttractionName")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
+
                     b.HasKey("AttractionId");
 
                     b.HasIndex("AddressId");

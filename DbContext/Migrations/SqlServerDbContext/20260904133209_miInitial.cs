@@ -104,7 +104,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionName = table.Column<string>(type: "varchar(200)", nullable: true),
-                    AttractionDescription = table.Column<string>(type: "varchar(200)", nullable: true)
+                    AttractionDescription = table.Column<string>(type: "varchar(200)", nullable: true),
+                    Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

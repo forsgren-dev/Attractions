@@ -733,7 +733,7 @@ namespace Seido.Utilities.SeedGenerator
                 set
                 {
                     _jsonAttractionPrefixes = value;
-                    _attractionNames = _jsonAttractionPrefixes.Split(", ").ToList();
+                    _attractionNamePrefixes = _jsonAttractionPrefixes.Split(", ").ToList();
                 }
             }
 
@@ -755,7 +755,7 @@ namespace Seido.Utilities.SeedGenerator
                 set
                 {
                     _jsonAttractionSuffixes = value;
-                    _attractionNames = _jsonAttractionSuffixes.Split(", ").ToList();
+                    _attractionNameSuffixes = _jsonAttractionSuffixes.Split(", ").ToList();
                 }
             }
 
@@ -891,10 +891,6 @@ namespace Seido.Utilities.SeedGenerator
             List<string> _groupNames;
             [JsonIgnore]
             public List<string> GroupNames => _groupNames;
-
-            List<string> _attractionNames;
-            [JsonIgnore]
-            public List<string> AttractionNames => _attractionNames;
 
             List<string> _albumNames;
             [JsonIgnore]
