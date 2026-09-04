@@ -8,6 +8,8 @@ public class City : ICity
     public virtual Guid CityId { get; set; }
     public string CityName { get; set; }
 
+    public virtual ICountry Country { get; set; }
+
     public virtual List<IAddress> Addresses { get; set; }
     
 

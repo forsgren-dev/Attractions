@@ -24,7 +24,7 @@ public class AddressDbM : Address
     [NotMapped]
     public override ICountry Country
     {
-        get => CountryDbM;
+        get => CityDbM.CountryDbM;
         set => throw new NotImplementedException();
     }
 
@@ -32,12 +32,6 @@ public class AddressDbM : Address
 
     [ForeignKey(nameof(CityId))]
     public CityDbM CityDbM { get; set; }
-
-
-    public Guid CountryId { get; set; }
-
-    [ForeignKey(nameof(CountryId))]
-    public CountryDbM CountryDbM { get; set; }
 
 
     #region constructor

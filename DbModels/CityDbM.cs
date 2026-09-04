@@ -11,8 +11,20 @@ namespace DbModels;
 public class CityDbM : City
 {
     
- [Key]
+    [Key]
     public override Guid CityId { get; set; }
+
+    [NotMapped]
+    public override ICountry Country
+    {
+        get => CountryDbM;
+        set => throw new NotImplementedException();
+    }
+
+    public Guid CountryId { get; set; }
+
+    [ForeignKey(nameof(CountryId))]
+    public CountryDbM CountryDbM { get; set; }
 
     [NotMapped]
     public override List<IAddress> Addresses

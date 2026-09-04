@@ -17,7 +17,9 @@ public enum CategoryType
     Restaurant,
     Historical,
     Religious,
-    Viewpoint,
+    Art,
+    Architecture,
+    Nature,
     Amusement,
     Shopping,
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260904093649_miInitial")]
+    [Migration("20260904095948_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -37,7 +37,7 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasIndex("CategoryDbMCategoryId");
 
-                    b.ToTable("AttractionDbMCategoryDbM", "supusr");
+                    b.ToTable("AttractionCategoriesDbM", "supusr");
                 });
 
             modelBuilder.Entity("DbModels.AddressDbM", b =>
@@ -75,6 +75,9 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.Property<Guid>("AddressId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AttractionDescription")
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("AttractionName")
                         .HasColumnType("varchar(200)");
@@ -126,9 +129,14 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CommentText")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CommentId");
 
                     b.HasIndex("AttractionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments", "supusr");
                 });
@@ -145,6 +153,20 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("CountryId");
 
                     b.ToTable("Countries", "supusr");
+                });
+
+            modelBuilder.Entity("DbModels.UserDbM", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users", "supusr");
                 });
 
             modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
@@ -200,7 +222,15 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DbModels.UserDbM", "UserDbM")
+                        .WithMany("CommentDbM")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AttractionDbM");
+
+                    b.Navigation("UserDbM");
                 });
 
             modelBuilder.Entity("DbModels.AttractionDbM", b =>
@@ -211,6 +241,11 @@ namespace DbContext.Migrations.SqlServerDbContext
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.Navigation("AddressDbM");
+                });
+
+            modelBuilder.Entity("DbModels.UserDbM", b =>
+                {
+                    b.Navigation("CommentDbM");
                 });
 #pragma warning restore 612, 618
         }

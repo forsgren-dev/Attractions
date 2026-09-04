@@ -54,6 +54,19 @@ namespace DbContext.Migrations.SqlServerDbContext
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                schema: "supusr",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "varchar(200)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Addresses",
                 schema: "supusr",
                 columns: table => new
@@ -90,7 +103,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttractionName = table.Column<string>(type: "varchar(200)", nullable: true)
+                    AttractionName = table.Column<string>(type: "varchar(200)", nullable: true),
+                    AttractionDescription = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,7 +119,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 });
 
             migrationBuilder.CreateTable(
-                name: "AttractionDbMCategoryDbM",
+                name: "AttractionCategoriesDbM",
                 schema: "supusr",
                 columns: table => new
                 {
@@ -114,16 +128,16 @@ namespace DbContext.Migrations.SqlServerDbContext
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AttractionDbMCategoryDbM", x => new { x.AttractionDbMAttractionId, x.CategoryDbMCategoryId });
+                    table.PrimaryKey("PK_AttractionCategoriesDbM", x => new { x.AttractionDbMAttractionId, x.CategoryDbMCategoryId });
                     table.ForeignKey(
-                        name: "FK_AttractionDbMCategoryDbM_Attractions_AttractionDbMAttractionId",
+                        name: "FK_AttractionCategoriesDbM_Attractions_AttractionDbMAttractionId",
                         column: x => x.AttractionDbMAttractionId,
                         principalSchema: "supusr",
                         principalTable: "Attractions",
                         principalColumn: "AttractionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AttractionDbMCategoryDbM_Categories_CategoryDbMCategoryId",
+                        name: "FK_AttractionCategoriesDbM_Categories_CategoryDbMCategoryId",
                         column: x => x.CategoryDbMCategoryId,
                         principalSchema: "supusr",
                         principalTable: "Categories",
@@ -138,6 +152,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CommentText = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
@@ -149,6 +164,13 @@ namespace DbContext.Migrations.SqlServerDbContext
                         principalSchema: "supusr",
                         principalTable: "Attractions",
                         principalColumn: "AttractionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "supusr",
+                        principalTable: "Users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -165,9 +187,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttractionDbMCategoryDbM_CategoryDbMCategoryId",
+                name: "IX_AttractionCategoriesDbM_CategoryDbMCategoryId",
                 schema: "supusr",
-                table: "AttractionDbMCategoryDbM",
+                table: "AttractionCategoriesDbM",
                 column: "CategoryDbMCategoryId");
 
             migrationBuilder.CreateIndex(
@@ -181,13 +203,19 @@ namespace DbContext.Migrations.SqlServerDbContext
                 schema: "supusr",
                 table: "Comments",
                 column: "AttractionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                schema: "supusr",
+                table: "Comments",
+                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AttractionDbMCategoryDbM",
+                name: "AttractionCategoriesDbM",
                 schema: "supusr");
 
             migrationBuilder.DropTable(
@@ -200,6 +228,10 @@ namespace DbContext.Migrations.SqlServerDbContext
 
             migrationBuilder.DropTable(
                 name: "Attractions",
+                schema: "supusr");
+
+            migrationBuilder.DropTable(
+                name: "Users",
                 schema: "supusr");
 
             migrationBuilder.DropTable(
