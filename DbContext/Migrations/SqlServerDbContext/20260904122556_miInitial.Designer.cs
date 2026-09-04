@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260904112515_miInitial")]
+    [Migration("20260904122556_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -213,7 +213,7 @@ namespace DbContext.Migrations.SqlServerDbContext
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.HasOne("DbModels.CountryDbM", "CountryDbM")
-                        .WithMany()
+                        .WithMany("CityDbM")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -248,6 +248,11 @@ namespace DbContext.Migrations.SqlServerDbContext
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.Navigation("AddressDbM");
+                });
+
+            modelBuilder.Entity("DbModels.CountryDbM", b =>
+                {
+                    b.Navigation("CityDbM");
                 });
 
             modelBuilder.Entity("DbModels.UserDbM", b =>

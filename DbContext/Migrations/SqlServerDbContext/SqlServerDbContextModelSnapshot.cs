@@ -210,7 +210,7 @@ namespace DbContext.Migrations.SqlServerDbContext
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.HasOne("DbModels.CountryDbM", "CountryDbM")
-                        .WithMany()
+                        .WithMany("CityDbM")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -245,6 +245,11 @@ namespace DbContext.Migrations.SqlServerDbContext
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.Navigation("AddressDbM");
+                });
+
+            modelBuilder.Entity("DbModels.CountryDbM", b =>
+                {
+                    b.Navigation("CityDbM");
                 });
 
             modelBuilder.Entity("DbModels.UserDbM", b =>

@@ -24,7 +24,7 @@ namespace AppWebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var result = 10; // await _service.ListAsync();
+            var result = await _service.ListAsync();
             return Ok(result);
         }
 

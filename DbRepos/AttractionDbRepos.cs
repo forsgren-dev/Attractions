@@ -17,6 +17,27 @@ public class AttractionDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
+
+    public async Task<List<AttractionListItem>> ListAsync()
+    {
+        var attractions = await _dbContext.Attractions
+            .Select(a => new AttractionListItem
+            {
+                AttractionName = a.AttractionName,
+                AttractionDescription = a.AttractionDescription,
+                Address = new AttractionAddressItem
+                {
+                    Street = a.AddressDbM.Street,
+                    PostalCode = a.AddressDbM.PostalCode,
+                    City = a.AddressDbM.CityDbM.CityName,
+                    Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
+                }
+            })
+            .ToListAsync();
+
+        return attractions;
+    }
+
     public async Task SeedAsync(int nrItems)
     {
         var fn = Path.GetFullPath(_seedSource);
@@ -41,6 +62,7 @@ public class AttractionDbRepos
 
         await _dbContext.SaveChangesAsync();
     }
+
 
     private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
     {
