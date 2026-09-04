@@ -28,14 +28,11 @@ namespace AppWebApi.Controllers
             return Ok(result);
         }
 
-        //GET: api/attraction/seed?nrItems=10&countries=Sweden,Norway
+        //GET: api/attraction/seed?nrItems=10
         [HttpGet]
-        public async Task<IActionResult> Seed(int nrItems = 10, string countries = "Sweden,Norway,Denmark,Finland")
+        public async Task<IActionResult> Seed(int nrItems = 10)
         {
-            var countryNames = countries
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            await _service.SeedAsync(nrItems, countryNames);
+            await _service.SeedAsync(nrItems);
 
             return Ok($"Seeded {nrItems} attractions successfully");
         }

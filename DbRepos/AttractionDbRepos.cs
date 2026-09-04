@@ -17,17 +17,15 @@ public class AttractionDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task SeedAsync(int nrItems, string[] countries = null)
+    public async Task SeedAsync(int nrItems)
     {
         var fn = Path.GetFullPath(_seedSource);
         var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
 
         for (int i = 0; i < nrItems; i++)
         {
-            var countryName = countries is { Length: > 0 }
-                ? seeder.FromList(countries.ToList())
-                : seeder.Country;
-            var address = CreateAddress(seeder, countryName);
+            var countryName = seeder.Country;
+            var address = SeedAddress(seeder, countryName);
 
             var attraction = new AttractionDbM
             {
@@ -35,7 +33,7 @@ public class AttractionDbRepos
                 AttractionName = seeder.MusicGroupName,
                 AttractionDescription = seeder.LatinSentence,
                 AddressDbM = address,
-                CategoryDbM = CreateCategories(seeder)
+                CategoryDbM = SeedCategories(seeder)
             };
 
             _dbContext.Attractions.Add(attraction);
@@ -44,7 +42,7 @@ public class AttractionDbRepos
         await _dbContext.SaveChangesAsync();
     }
 
-    private AddressDbM CreateAddress(SeedGenerator seeder, string countryName)
+    private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
     {
         var country = new CountryDbM
         {
@@ -68,15 +66,12 @@ public class AttractionDbRepos
         };
     }
 
-    private List<CategoryDbM> CreateCategories(SeedGenerator seeder)
+    private List<CategoryDbM> SeedCategories(SeedGenerator seeder)
     {
         var nrOfCategories = seeder.Next(1, 4);
-        var pickedCategories = new HashSet<CategoryType>();
-
-        while (pickedCategories.Count < nrOfCategories)
-        {
-            pickedCategories.Add(seeder.FromEnum<CategoryType>());
-        }
+        var pickedCategories = Enum.GetValues<CategoryType>()
+            .OrderBy(_ => seeder.Next())
+            .Take(nrOfCategories);
 
         return pickedCategories.Select(categoryType => new CategoryDbM
         {

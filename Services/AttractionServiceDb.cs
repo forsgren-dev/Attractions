@@ -9,7 +9,7 @@ public class AttractionServiceDb : IAttractionService
     private readonly AttractionDbRepos _repo = null;
     private readonly ILogger<AttractionServiceDb> _logger = null;
 
-    public Task SeedAsync(int nrItems, string[] countries = null) => _repo.SeedAsync(nrItems, countries);
+    public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
 
     #region constructors
     public AttractionServiceDb(AttractionDbRepos repo)
