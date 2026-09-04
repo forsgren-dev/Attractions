@@ -8,7 +8,7 @@ using Models;
 namespace DbModels;
 
 [Table("Categories", Schema = "supusr")]
-public class CategoryDbM : AttractionCategory
+public class CategoryDbM : Category
 {
     
  [Key]

@@ -27,6 +27,26 @@ namespace AppWebApi.Controllers
             var result = 10; // await _service.ListAsync();
             return Ok(result);
         }
+
+        //GET: api/attraction/seed?nrItems=10&countries=Sweden,Norway
+        [HttpGet]
+        public async Task<IActionResult> Seed(int nrItems = 10, string countries = "Sweden,Norway,Denmark,Finland")
+        {
+            var countryNames = countries
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            await _service.SeedAsync(nrItems, countryNames);
+
+            return Ok($"Seeded {nrItems} attractions successfully");
+        }
+
+        public AttractionController(
+            ILogger<AttractionController> logger,
+            IAttractionService service)
+        {
+            _logger = logger;
+            _service = service;
+        }
     }
 
 }

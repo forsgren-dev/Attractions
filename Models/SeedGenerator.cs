@@ -28,6 +28,8 @@ namespace Seido.Utilities.SeedGenerator
 
     public class SeedGenerator : Random
     {
+
+
         readonly SeedJsonContent _seeds = null;
 
         #region Names

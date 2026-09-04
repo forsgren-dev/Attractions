@@ -6,6 +6,7 @@ using Seido.Utilities.SeedGenerator;
 using DbModels;
 using DbContext;
 using Configuration;
+using Models;
 
 namespace DbRepos;
 
@@ -16,18 +17,73 @@ public class AttractionDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    // public async Task SeedAsync(int nrItems)
-    // {
-    //     //Create a seeder
-    //     var fn = Path.GetFullPath(_seedSource);
-    //     var seeder = new SeedGenerator(fn);
+    public async Task SeedAsync(int nrItems, string[] countries = null)
+    {
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
 
-    //     var creditcards = seeder.ItemsToList<CreditCardDbM>(nrItems);
-    //     _dbContext.CreditCards.AddRange(creditcards);
+        for (int i = 0; i < nrItems; i++)
+        {
+            var countryName = countries is { Length: > 0 }
+                ? seeder.FromList(countries.ToList())
+                : seeder.Country;
+            var address = CreateAddress(seeder, countryName);
 
-    //     //Save changes to the database
-    //     await _dbContext.SaveChangesAsync();
-    // }
+            var attraction = new AttractionDbM
+            {
+                AttractionId = Guid.NewGuid(),
+                AttractionName = seeder.MusicGroupName,
+                AttractionDescription = seeder.LatinSentence,
+                AddressDbM = address,
+                CategoryDbM = CreateCategories(seeder)
+            };
+
+            _dbContext.Attractions.Add(attraction);
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private AddressDbM CreateAddress(SeedGenerator seeder, string countryName)
+    {
+        var country = new CountryDbM
+        {
+            CountryId = Guid.NewGuid(),
+            CountryName = countryName
+        };
+
+        var city = new CityDbM
+        {
+            CityId = Guid.NewGuid(),
+            CityName = seeder.City(countryName),
+            CountryDbM = country
+        };
+
+        return new AddressDbM
+        {
+            AddressId = Guid.NewGuid(),
+            Street = seeder.StreetAddress(countryName),
+            PostalCode = seeder.ZipCode.ToString(),
+            CityDbM = city
+        };
+    }
+
+    private List<CategoryDbM> CreateCategories(SeedGenerator seeder)
+    {
+        var nrOfCategories = seeder.Next(1, 4);
+        var pickedCategories = new HashSet<CategoryType>();
+
+        while (pickedCategories.Count < nrOfCategories)
+        {
+            pickedCategories.Add(seeder.FromEnum<CategoryType>());
+        }
+
+        return pickedCategories.Select(categoryType => new CategoryDbM
+        {
+            CategoryId = Guid.NewGuid(),
+            CategoryType = categoryType
+        }).ToList();
+    }
 
     public AttractionDbRepos(
         ILogger<AttractionDbRepos> logger,

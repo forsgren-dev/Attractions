@@ -15,10 +15,10 @@ public class AttractionDbM : Attraction
     public override Guid AttractionId { get; set; }
 
      [NotMapped]
-     public override List<IAttractionCategory> Categories
+     public override List<ICategory> Categories
 
     {
-        get => CategoryDbM.Cast<IAttractionCategory>().ToList();
+        get => CategoryDbM.Cast<ICategory>().ToList();
         set => throw new NotImplementedException();
     }
     public List<CategoryDbM> CategoryDbM { get; set; } = new();

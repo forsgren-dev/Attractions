@@ -20,24 +20,11 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false)
+                    CategoryType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Cities",
-                schema: "supusr",
-                columns: table => new
-                {
-                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CityName = table.Column<string>(type: "varchar(200)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cities", x => x.CityId);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,13 +54,33 @@ namespace DbContext.Migrations.SqlServerDbContext
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cities",
+                schema: "supusr",
+                columns: table => new
+                {
+                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CityName = table.Column<string>(type: "varchar(200)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.CityId);
+                    table.ForeignKey(
+                        name: "FK_Cities_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalSchema: "supusr",
+                        principalTable: "Countries",
+                        principalColumn: "CountryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Addresses",
                 schema: "supusr",
                 columns: table => new
                 {
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Street = table.Column<string>(type: "varchar(200)", nullable: true),
                     PostalCode = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
@@ -86,13 +93,6 @@ namespace DbContext.Migrations.SqlServerDbContext
                         principalSchema: "supusr",
                         principalTable: "Cities",
                         principalColumn: "CityId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalSchema: "supusr",
-                        principalTable: "Countries",
-                        principalColumn: "CountryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -181,12 +181,6 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_CountryId",
-                schema: "supusr",
-                table: "Addresses",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AttractionCategoriesDbM_CategoryDbMCategoryId",
                 schema: "supusr",
                 table: "AttractionCategoriesDbM",
@@ -197,6 +191,20 @@ namespace DbContext.Migrations.SqlServerDbContext
                 schema: "supusr",
                 table: "Attractions",
                 column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cities_CityName_CountryId",
+                schema: "supusr",
+                table: "Cities",
+                columns: new[] { "CityName", "CountryId" },
+                unique: true,
+                filter: "[CityName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cities_CountryId",
+                schema: "supusr",
+                table: "Cities",
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_AttractionId",

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260904095948_miInitial")]
+    [Migration("20260904112515_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -49,9 +49,6 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<Guid>("CityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CountryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PostalCode")
                         .HasColumnType("varchar(200)");
 
@@ -61,8 +58,6 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("AddressId");
 
                     b.HasIndex("CityId");
-
-                    b.HasIndex("CountryId");
 
                     b.ToTable("Addresses", "supusr");
                 });
@@ -95,7 +90,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Category")
+                    b.Property<int>("CategoryType")
                         .HasColumnType("int");
 
                     b.HasKey("CategoryId");
@@ -112,7 +107,16 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CityName")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CityId");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("CityName", "CountryId")
+                        .IsUnique()
+                        .HasFilter("[CityName] IS NOT NULL");
 
                     b.ToTable("Cities", "supusr");
                 });
@@ -192,15 +196,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DbModels.CountryDbM", "CountryDbM")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CityDbM");
-
-                    b.Navigation("CountryDbM");
                 });
 
             modelBuilder.Entity("DbModels.AttractionDbM", b =>
@@ -212,6 +208,17 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .IsRequired();
 
                     b.Navigation("AddressDbM");
+                });
+
+            modelBuilder.Entity("DbModels.CityDbM", b =>
+                {
+                    b.HasOne("DbModels.CountryDbM", "CountryDbM")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CountryDbM");
                 });
 
             modelBuilder.Entity("DbModels.CommentDbM", b =>
