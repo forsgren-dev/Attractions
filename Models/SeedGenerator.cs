@@ -37,6 +37,14 @@ namespace Seido.Utilities.SeedGenerator
         public string FirstName => _seeds.Names.FirstNames[this.Next(0, _seeds.Names.FirstNames.Count)];
         public string LastName => _seeds.Names.LastNames[this.Next(0, _seeds.Names.LastNames.Count)];
         public string FullName => $"{FirstName} {LastName}";
+
+
+        public string AttractionName => _seeds.Names.AttractionNamePrefixes[this.Next(0, _seeds.Names.AttractionNamePrefixes.Count)]
+            + " " + _seeds.Names.AttractionNames[this.Next(0, _seeds.Names.AttractionNames.Count)]
+            + " " + _seeds.Names.AttractionNameSuffixes[this.Next(0, _seeds.Names.AttractionNameSuffixes.Count)];
+
+
+
         #endregion
 
         #region Addresses
@@ -331,7 +339,7 @@ namespace Seido.Utilities.SeedGenerator
             return retList;
         }
         #endregion
- 
+
         #region initialize master content
         SeedJsonContent CreateMasterSeedFile()
         {
@@ -574,7 +582,12 @@ namespace Seido.Utilities.SeedGenerator
                     jsonFirstNames = "Harry, Lord, Hermione, Albus, Severus, Ron, Draco, Frodo, Gandalf, Sam, Peregrin, Saruman",
                     jsonLastNames = "Potter, Voldemort, Granger, Dumbledore, Snape, Malfoy, Baggins, the Gray, Gamgee, Took, the White",
                     jsonPetNames = "Max, Charlie, Cooper, Milo, Rocky, Wanda, Teddy, Duke, Leo, Max, Simba",
+                    jsonAttractionPrefixes = "The Great, The Old, The New, The Historic, The Legendary, The",
+                    jsonAttractionNames = "Nobel, Royal, Swedish, Danish, Norse, Finnish, Liberty, Nordic, Viking, King's, Queen's, Northern, Forsgren, Astrid Lindgren, Scandinavian, Baltic",
+                    jsonAttractionSuffixes = "Wall, Tower, Plaza, House, Museum, Park, Garden, Bridge, Square, Street, Avenue, Boulevard, Circle, Court, Parade, Mountain, Lake, River, Beach, Island, Bay, Point, Valley, Forest, Trail"
                 },
+
+
                 Domains = new SeedDomains
                 {
                     jsonDomainNames = "icloud.com, me.com, mac.com, hotmail.com, gmail.com"
@@ -668,7 +681,7 @@ namespace Seido.Utilities.SeedGenerator
         {
             #region Country towards json file
             string _jsonCountry;
-            public string jsonCountry { get => _jsonCountry; set { _jsonCountry = value; }}
+            public string jsonCountry { get => _jsonCountry; set { _jsonCountry = value; } }
             #endregion
 
             [JsonIgnore]
@@ -711,6 +724,44 @@ namespace Seido.Utilities.SeedGenerator
         class SeedNames
         {
             #region Names towards json file
+
+
+            string _jsonAttractionPrefixes;
+            public string jsonAttractionPrefixes
+            {
+                get => _jsonAttractionPrefixes;
+                set
+                {
+                    _jsonAttractionPrefixes = value;
+                    _attractionNames = _jsonAttractionPrefixes.Split(", ").ToList();
+                }
+            }
+
+            string _jsonAttractionNames;
+            public string jsonAttractionNames
+            {
+                get => _jsonAttractionNames;
+                set
+                {
+                    _jsonAttractionNames = value;
+                    _attractionNames = _jsonAttractionNames.Split(", ").ToList();
+                }
+            }
+
+            string _jsonAttractionSuffixes;
+            public string jsonAttractionSuffixes
+            {
+                get => _jsonAttractionSuffixes;
+                set
+                {
+                    _jsonAttractionSuffixes = value;
+                    _attractionNames = _jsonAttractionSuffixes.Split(", ").ToList();
+                }
+            }
+
+
+
+
             string _jsonFirstNames;
             public string jsonFirstNames
             {
@@ -744,6 +795,19 @@ namespace Seido.Utilities.SeedGenerator
                 }
             }
             #endregion
+
+            List<string> _attractionNames;
+            [JsonIgnore]
+            public List<string> AttractionNames => _attractionNames;
+            List<string> _attractionNamePrefixes;
+            [JsonIgnore]
+            public List<string> AttractionNamePrefixes => _attractionNamePrefixes;
+            List<string> _attractionNameSuffixes;
+            [JsonIgnore]
+            public List<string> AttractionNameSuffixes => _attractionNameSuffixes;
+
+
+
 
             List<string> _firstNames;
             [JsonIgnore]
@@ -828,6 +892,10 @@ namespace Seido.Utilities.SeedGenerator
             [JsonIgnore]
             public List<string> GroupNames => _groupNames;
 
+            List<string> _attractionNames;
+            [JsonIgnore]
+            public List<string> AttractionNames => _attractionNames;
+
             List<string> _albumNames;
             [JsonIgnore]
             public List<string> AlbumNames => _albumNames;
@@ -883,19 +951,20 @@ namespace Seido.Utilities.SeedGenerator
                 return Path.Combine(documentPath, name);
             }
 
-            public static bool FileExists(string FileName){
+            public static bool FileExists(string FileName)
+            {
 
                 var fn = Path.GetFileName(FileName);
                 if (fn == FileName)
                 {
                     //no path in FileName use default directory
-                   return File.Exists(fname(FileName));
+                    return File.Exists(fname(FileName));
                 }
-    
+
                 return File.Exists(FileName);
             }
         }
-    #endregion
+        #endregion
     }
 }
 

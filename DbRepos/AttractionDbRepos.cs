@@ -51,7 +51,7 @@ public class AttractionDbRepos
             var attraction = new AttractionDbM
             {
                 AttractionId = Guid.NewGuid(),
-                AttractionName = seeder.MusicGroupName,
+                AttractionName = seeder.AttractionName,
                 AttractionDescription = seeder.LatinSentence,
                 AddressDbM = address,
                 CategoryDbM = SeedCategories(seeder)
