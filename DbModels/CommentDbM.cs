@@ -25,6 +25,18 @@ public class CommentDbM : Comment
 
     [ForeignKey(nameof(AttractionId))]
     public AttractionDbM AttractionDbM { get; set; }
+
+    [NotMapped]
+    public override IUser User
+    {
+        get => UserDbM;
+        set => throw new NotImplementedException();
+    }
+
+    public Guid UserId { get; set; }
+
+    [ForeignKey(nameof(UserId))]
+    public UserDbM UserDbM { get; set; }
 }
 
 

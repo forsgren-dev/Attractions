@@ -10,7 +10,7 @@ public class Comment : IComment
 
     public virtual IAttraction Attraction { get; set; }
 
-    
+    public virtual IUser User { get; set; }
 
 }
 

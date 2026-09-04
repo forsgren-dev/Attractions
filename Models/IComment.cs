@@ -8,6 +8,8 @@ public interface IComment
 
     public IAttraction Attraction { get; set; }
 
+    public IUser User { get; set; }
+
 }
 
 
