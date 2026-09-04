@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260904084358_miInitial")]
+    [Migration("20260904093649_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace DbContext.Migrations.SqlServerDbContext
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
+                {
+                    b.Property<Guid>("AttractionDbMAttractionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryDbMCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AttractionDbMAttractionId", "CategoryDbMCategoryId");
+
+                    b.HasIndex("CategoryDbMCategoryId");
+
+                    b.ToTable("AttractionDbMCategoryDbM", "supusr");
+                });
 
             modelBuilder.Entity("DbModels.AddressDbM", b =>
                 {
@@ -71,6 +86,20 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.ToTable("Attractions", "supusr");
                 });
 
+            modelBuilder.Entity("DbModels.CategoryDbM", b =>
+                {
+                    b.Property<Guid>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories", "supusr");
+                });
+
             modelBuilder.Entity("DbModels.CityDbM", b =>
                 {
                     b.Property<Guid>("CityId")
@@ -116,6 +145,21 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("CountryId");
 
                     b.ToTable("Countries", "supusr");
+                });
+
+            modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
+                {
+                    b.HasOne("DbModels.AttractionDbM", null)
+                        .WithMany()
+                        .HasForeignKey("AttractionDbMAttractionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DbModels.CategoryDbM", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryDbMCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DbModels.AddressDbM", b =>

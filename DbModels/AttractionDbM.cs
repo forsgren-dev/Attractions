@@ -14,6 +14,16 @@ public class AttractionDbM : Attraction
     [Key]
     public override Guid AttractionId { get; set; }
 
+     [NotMapped]
+     public override List<IAttractionCategory> Categories
+
+    {
+        get => CategoryDbM.Cast<IAttractionCategory>().ToList();
+        set => throw new NotImplementedException();
+    }
+    public List<CategoryDbM> CategoryDbM { get; set; } = new();
+
+
     [NotMapped]
     public override List<IComment> Comments
     {

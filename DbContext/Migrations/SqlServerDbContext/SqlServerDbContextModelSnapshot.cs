@@ -22,6 +22,21 @@ namespace DbContext.Migrations.SqlServerDbContext
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
+                {
+                    b.Property<Guid>("AttractionDbMAttractionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryDbMCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AttractionDbMAttractionId", "CategoryDbMCategoryId");
+
+                    b.HasIndex("CategoryDbMCategoryId");
+
+                    b.ToTable("AttractionDbMCategoryDbM", "supusr");
+                });
+
             modelBuilder.Entity("DbModels.AddressDbM", b =>
                 {
                     b.Property<Guid>("AddressId")
@@ -66,6 +81,20 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasIndex("AddressId");
 
                     b.ToTable("Attractions", "supusr");
+                });
+
+            modelBuilder.Entity("DbModels.CategoryDbM", b =>
+                {
+                    b.Property<Guid>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories", "supusr");
                 });
 
             modelBuilder.Entity("DbModels.CityDbM", b =>
@@ -113,6 +142,21 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasKey("CountryId");
 
                     b.ToTable("Countries", "supusr");
+                });
+
+            modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
+                {
+                    b.HasOne("DbModels.AttractionDbM", null)
+                        .WithMany()
+                        .HasForeignKey("AttractionDbMAttractionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DbModels.CategoryDbM", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryDbMCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DbModels.AddressDbM", b =>
