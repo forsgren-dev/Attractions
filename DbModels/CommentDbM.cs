@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbModels;
 
+[Table("Comments", Schema = "supusr")]
 public class CommentDbM : Comment
 {
     [Key]
@@ -17,16 +18,17 @@ public class CommentDbM : Comment
     public override IAttraction Attraction
     {
         get => AttractionDbM;
-        set => AttractionDbM = (AttractionDbM)value;
+        set => throw new NotImplementedException();
     }
 
     public Guid AttractionId { get; set; }
 
+    [ForeignKey(nameof(AttractionId))]
     public AttractionDbM AttractionDbM { get; set; }
 }
-   
 
-    
+
+
 
 
 

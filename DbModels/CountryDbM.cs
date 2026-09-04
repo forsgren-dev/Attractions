@@ -7,6 +7,7 @@ using Models;
 
 namespace DbModels;
 
+[Table("Countries", Schema = "supusr")]
 public class CountryDbM : Country
 {
     

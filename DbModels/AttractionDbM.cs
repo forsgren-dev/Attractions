@@ -7,6 +7,7 @@ using Models;
 
 namespace DbModels;
 
+[Table("Attractions", Schema = "supusr")]
 public class AttractionDbM : Attraction
 {
 
@@ -17,10 +18,22 @@ public class AttractionDbM : Attraction
     public override List<IComment> Comments
     {
         get => CommentDbM.Cast<IComment>().ToList();
-        set => CommentDbM = value.Cast<CommentDbM>().ToList();
+        set => throw new NotImplementedException();
     }
 
     public List<CommentDbM> CommentDbM { get; set; } = new();
+
+    [NotMapped]
+    public override IAddress Address
+    {
+        get => AddressDbM;
+        set => throw new NotImplementedException();
+    }
+
+    public Guid AddressId { get; set; }
+
+    [ForeignKey(nameof(AddressId))]
+    public AddressDbM AddressDbM { get; set; }
 
     #region constructor
     public AttractionDbM() { }
