@@ -19,7 +19,7 @@ public class Attraction : IAttraction, ISeed<Attraction>
     #region seeding
     public bool Seeded { get; set; } = false;
 
-    public Attraction Seed(SeedGenerator seeder)
+    public virtual Attraction Seed(SeedGenerator seeder)
     {
         AttractionId = Guid.NewGuid();
         AttractionName = seeder.AttractionName;

@@ -40,13 +40,23 @@ public class AttractionDbM : Attraction
         set => throw new NotImplementedException();
     }
 
-    public Guid AddressId { get; set; }
+    //public Guid AddressId { get; set; }
 
-    [ForeignKey(nameof(AddressId))]
+    [ForeignKey("AddressId")]
     public AddressDbM AddressDbM { get; set; }
 
     #region constructor
     public AttractionDbM() { }
+
+    #endregion
+
+    #region seeding
+    
+    public override Attraction Seed(SeedGenerator seeder)
+    {
+        base.Seed(seeder);
+        return this;
+    }
 
     #endregion
 

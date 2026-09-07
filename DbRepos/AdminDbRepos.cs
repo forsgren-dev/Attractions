@@ -18,16 +18,7 @@ public class AdminDbRepos
 
     // public async Task SeedAsync(int nrItems)
     // {
-    //     //Create a seeder
-    //     var fn = Path.GetFullPath(_seedSource);
-    //     var seeder = new SeedGenerator(fn);
-
-    //     var creditcards = seeder.ItemsToList<CreditCardDbM>(nrItems);
-    //     _dbContext.CreditCards.AddRange(creditcards);
-
-    //     //Save changes to the database
-    //     await _dbContext.SaveChangesAsync();
-    // }
+    //     }
 
     public AdminDbRepos(
         ILogger<AdminDbRepos> logger,

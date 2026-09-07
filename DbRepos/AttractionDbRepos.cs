@@ -91,11 +91,11 @@ public class AttractionDbRepos
     private List<CategoryDbM> SeedCategories(SeedGenerator seeder)
     {
         var nrOfCategories = seeder.Next(1, 4);
-        var pickedCategories = Enum.GetValues<CategoryType>()
+        var attractionCategories = Enum.GetValues<CategoryType>()
             .OrderBy(_ => seeder.Next())
             .Take(nrOfCategories);
 
-        return pickedCategories.Select(categoryType => new CategoryDbM
+        return attractionCategories.Select(categoryType => new CategoryDbM
         {
             CategoryId = Guid.NewGuid(),
             CategoryType = categoryType
