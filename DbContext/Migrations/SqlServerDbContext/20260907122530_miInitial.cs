@@ -61,18 +61,18 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CountryDbMCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CityName = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cities", x => x.CityId);
                     table.ForeignKey(
-                        name: "FK_Cities_Countries_CountryId",
-                        column: x => x.CountryId,
+                        name: "FK_Cities_Countries_CountryDbMCountryId",
+                        column: x => x.CountryDbMCountryId,
                         principalSchema: "supusr",
                         principalTable: "Countries",
-                        principalColumn: "CountryId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CountryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -81,7 +81,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CityDbMCityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Street = table.Column<string>(type: "varchar(200)", nullable: true),
                     PostalCode = table.Column<string>(type: "varchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
@@ -90,12 +90,11 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     table.PrimaryKey("PK_Addresses", x => x.AddressId);
                     table.ForeignKey(
-                        name: "FK_Addresses_Cities_CityId",
-                        column: x => x.CityId,
+                        name: "FK_Addresses_Cities_CityDbMCityId",
+                        column: x => x.CityDbMCityId,
                         principalSchema: "supusr",
                         principalTable: "Cities",
-                        principalColumn: "CityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -104,7 +103,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AddressDbMAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AttractionName = table.Column<string>(type: "varchar(200)", nullable: true),
                     AttractionDescription = table.Column<string>(type: "varchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
@@ -113,8 +112,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     table.PrimaryKey("PK_Attractions", x => x.AttractionId);
                     table.ForeignKey(
-                        name: "FK_Attractions_Addresses_AddressId",
-                        column: x => x.AddressId,
+                        name: "FK_Attractions_Addresses_AddressDbMAddressId",
+                        column: x => x.AddressDbMAddressId,
                         principalSchema: "supusr",
                         principalTable: "Addresses",
                         principalColumn: "AddressId");
@@ -154,33 +153,32 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CommentText = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.CommentId);
                     table.ForeignKey(
-                        name: "FK_Comments_Attractions_AttractionId",
-                        column: x => x.AttractionId,
+                        name: "FK_Comments_Attractions_AttractionDbMAttractionId",
+                        column: x => x.AttractionDbMAttractionId,
                         principalSchema: "supusr",
                         principalTable: "Attractions",
-                        principalColumn: "AttractionId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AttractionId");
                     table.ForeignKey(
-                        name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Comments_Users_UserDbMUserId",
+                        column: x => x.UserDbMUserId,
                         principalSchema: "supusr",
                         principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_CityId",
+                name: "IX_Addresses_CityDbMCityId",
                 schema: "supusr",
                 table: "Addresses",
-                column: "CityId");
+                column: "CityDbMCityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AttractionCategoriesDbM_CategoryDbMCategoryId",
@@ -189,10 +187,10 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CategoryDbMCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attractions_AddressId",
+                name: "IX_Attractions_AddressDbMAddressId",
                 schema: "supusr",
                 table: "Attractions",
-                column: "AddressId");
+                column: "AddressDbMAddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_CityName_CountryId",
@@ -203,22 +201,22 @@ namespace DbContext.Migrations.SqlServerDbContext
                 filter: "[CityName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cities_CountryId",
+                name: "IX_Cities_CountryDbMCountryId",
                 schema: "supusr",
                 table: "Cities",
-                column: "CountryId");
+                column: "CountryDbMCountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_AttractionId",
+                name: "IX_Comments_AttractionDbMAttractionId",
                 schema: "supusr",
                 table: "Comments",
-                column: "AttractionId");
+                column: "AttractionDbMAttractionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
+                name: "IX_Comments_UserDbMUserId",
                 schema: "supusr",
                 table: "Comments",
-                column: "UserId");
+                column: "UserDbMUserId");
         }
 
         /// <inheritdoc />

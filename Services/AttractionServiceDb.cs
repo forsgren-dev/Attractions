@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
 using DbRepos;
-using Models;
+using Models.DTO;
 
 namespace Services;
     
@@ -12,17 +12,17 @@ public class AttractionServiceDb : IAttractionService
 
     public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
     public Task RemoveSeededAsync() => _repo.RemoveSeededAsync();
-    public Task<List<AttractionDTO>> ListAsync() => _repo.ListAsync();
+    public Task<ResponsePageDto<AttractionDto>> ListAsync(int pageSize, int pageNumber) => _repo.ListAsync(pageSize, pageNumber);
 
     #region constructors
-    public AttractionServiceDb(AttractionDbRepos repo)
+    public AttractionServiceDb(
+        AttractionDbRepos repo, 
+        ILogger<AttractionServiceDb> logger)
     {
         _repo = repo;
-    }
-    public AttractionServiceDb(AttractionDbRepos repo, ILogger<AttractionServiceDb> logger):this(repo)
-    {
         _logger = logger;
-    }
+    }   
+    
     #endregion
 }
 

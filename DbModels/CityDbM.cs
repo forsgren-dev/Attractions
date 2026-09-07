@@ -23,8 +23,10 @@ public class CityDbM : City
 
     public Guid CountryId { get; set; }
 
-    [ForeignKey(nameof(CountryId))]
+    #region foreign key
     public CountryDbM CountryDbM { get; set; }
+    
+    #endregion
 
     [NotMapped]
     public override List<IAddress> Addresses

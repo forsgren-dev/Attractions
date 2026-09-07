@@ -7,6 +7,8 @@ using DbModels;
 using DbContext;
 using Configuration;
 using Models;
+using Models.DTO;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DbRepos;
 
@@ -18,14 +20,21 @@ public class AttractionDbRepos
     private readonly MainDbContext _dbContext;
 
 
-    public async Task<List<AttractionDTO>> ListAsync()
+    public async Task<ResponsePageDto<AttractionDto>> ListAsync(int pageSize, int pageNumber)
     {
+        pageSize = Math.Max(1, pageSize);
+        pageNumber = Math.Max(0, pageNumber);
+
+        var totalCount = await _dbContext.Attractions.CountAsync();
+
         var attractions = await _dbContext.Attractions
-            .Select(a => new AttractionDTO
+            .Skip(pageNumber * pageSize)
+            .Take(pageSize)
+            .Select(a => new AttractionDto
             {
                 AttractionName = a.AttractionName,
                 AttractionDescription = a.AttractionDescription,
-                Address = new AttractionAddressDTO
+                Address = new AttractionAddressDto  
                 {
                     Street = a.AddressDbM.Street,
                     PostalCode = a.AddressDbM.PostalCode,
@@ -35,7 +44,14 @@ public class AttractionDbRepos
             })
             .ToListAsync();
 
-        return attractions;
+        return new ResponsePageDto<AttractionDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            DbItemsCount = totalCount,
+            Items = attractions
+        };   
     }
 
     public async Task SeedAsync(int nrItems)
@@ -74,7 +90,6 @@ public class AttractionDbRepos
 
         
 
-
     private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
     {
         var country = new CountryDbM
@@ -87,6 +102,7 @@ public class AttractionDbRepos
         {
             CityId = Guid.NewGuid(),
             CityName = seeder.City(countryName),
+            CountryId = country.CountryId,
             CountryDbM = country
         };
 

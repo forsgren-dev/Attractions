@@ -23,8 +23,9 @@ public class CommentDbM : Comment
 
     public Guid AttractionId { get; set; }
 
-    [ForeignKey(nameof(AttractionId))]
+    #region foreign key
     public AttractionDbM AttractionDbM { get; set; }
+    #endregion
 
     [NotMapped]
     public override IUser User
@@ -33,11 +34,14 @@ public class CommentDbM : Comment
         set => throw new NotImplementedException();
     }
 
-    public Guid UserId { get; set; }
+    //public Guid UserId { get; set; }
 
-    [ForeignKey(nameof(UserId))]
+   #region foreign key
     public UserDbM UserDbM { get; set; }
+
+    #endregion
 }
+
 
 
 

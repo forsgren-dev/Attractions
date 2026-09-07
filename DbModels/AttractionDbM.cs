@@ -42,8 +42,10 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
 
     // public Guid AddressId { get; set; }
 
-    [ForeignKey("AddressId")]
+    #region foreign key
     public AddressDbM AddressDbM { get; set; }
+    
+    #endregion
 
     #region constructor
     public AttractionDbM() { }

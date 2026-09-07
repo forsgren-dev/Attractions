@@ -28,10 +28,11 @@ public class AddressDbM : Address
         set => throw new NotImplementedException();
     }
 
-    public Guid CityId { get; set; }
-
-    [ForeignKey(nameof(CityId))]
+   
+   #region foreign key
     public CityDbM CityDbM { get; set; }
+
+    #endregion
 
 
     #region constructor

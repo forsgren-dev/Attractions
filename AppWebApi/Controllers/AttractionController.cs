@@ -26,11 +26,11 @@ namespace AppWebApi.Controllers
         [HttpGet]
         [ActionName("ListAttractions")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
         {
             var result = await _service.ListAsync(pageSize, pageNumber);
-            
+
             return Ok(result);
         }
 

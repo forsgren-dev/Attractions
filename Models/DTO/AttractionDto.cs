@@ -1,16 +1,18 @@
-namespace Models;
+namespace Models.DTO;
 
-public class AttractionDTO : IAttractionDTO
+public class AttractionDto 
 {
     public string AttractionName { get; set; }
     public string AttractionDescription { get; set; }
-    public IAttractionAddressDTO Address { get; set; }
+    public  AttractionAddressDto Address { get; set; }
 }
 
-public class AttractionAddressDTO : IAttractionAddressDTO
+
+public class AttractionAddressDto 
 {
     public string Street { get; set; }
     public string PostalCode { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
+
 }
