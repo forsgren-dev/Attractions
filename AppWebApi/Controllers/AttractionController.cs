@@ -7,6 +7,8 @@ using Services;
 using Configuration;
 using Configuration.Options;
 using Microsoft.Extensions.Options;
+using Models;
+using Models.DTO;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,9 +24,13 @@ namespace AppWebApi.Controllers
 
         //GET: api/attraction/list
         [HttpGet]
-        public async Task<IActionResult> List()
+        [ActionName("ListAttractions")]
+        [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
+        [ProducesResponseType(typeof(string), 200)]
+        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
         {
-            var result = await _service.ListAsync();
+            var result = await _service.ListAsync(pageSize, pageNumber);
+            
             return Ok(result);
         }
 
@@ -38,9 +44,13 @@ namespace AppWebApi.Controllers
         }
 
         [HttpDelete]
-        [ActionName("RemoveSeeded")]
-        public async Task<IActionResult> RemoveSeeded()
+        [ActionName("RemoveAttractions")]
+        public async Task<IActionResult> RemoveAll(bool Seeded = true)
         {
+            if (!Seeded)
+            {
+                return BadRequest("Invalid request. Seeded parameter must be true.");
+            }
             await _service.RemoveSeededAsync();
             return Ok("Seeded attractions removed successfully");
         }   
