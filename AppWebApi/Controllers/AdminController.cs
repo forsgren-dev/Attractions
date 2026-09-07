@@ -25,6 +25,13 @@ namespace AppWebApi.Controllers
         readonly Encryptions _encryptions = null;
         readonly DatabaseConnections _dbConnections = null;
         readonly IAdminService _service;
+        
+
+
+       
+
+       
+
 
         //GET: api/admin/environment
         [HttpGet()]

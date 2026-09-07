@@ -10,7 +10,7 @@ using Models;
 
 namespace DbRepos;
 
-public class AttractionDbRepos
+public class AttractionDbRepos 
 {
     private const string _seedSource = "./app-seeds.json";
     private readonly ILogger<AttractionDbRepos> _logger;
@@ -18,14 +18,14 @@ public class AttractionDbRepos
     private readonly MainDbContext _dbContext;
 
 
-    public async Task<List<AttractionListItem>> ListAsync()
+    public async Task<List<AttractionDTO>> ListAsync()
     {
         var attractions = await _dbContext.Attractions
-            .Select(a => new AttractionListItem
+            .Select(a => new AttractionDTO
             {
                 AttractionName = a.AttractionName,
                 AttractionDescription = a.AttractionDescription,
-                Address = new AttractionAddressItem
+                Address = new AttractionAddressDTO
                 {
                     Street = a.AddressDbM.Street,
                     PostalCode = a.AddressDbM.PostalCode,
@@ -53,6 +53,7 @@ public class AttractionDbRepos
                 AttractionId = Guid.NewGuid(),
                 AttractionName = seeder.AttractionName,
                 AttractionDescription = seeder.LatinSentence,
+                Seeded = true,
                 AddressDbM = address,
                 CategoryDbM = SeedCategories(seeder)
             };
@@ -62,6 +63,16 @@ public class AttractionDbRepos
 
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task RemoveSeededAsync()
+    {
+        var seededAttractions = await _dbContext.Attractions.Where(a => a.Seeded == true).ToListAsync();
+        
+        _dbContext.Attractions.RemoveRange(seededAttractions);
+        await _dbContext.SaveChangesAsync();
+    }
+
+        
 
 
     private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)

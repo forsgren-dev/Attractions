@@ -28,14 +28,25 @@ namespace AppWebApi.Controllers
             return Ok(result);
         }
 
-        //GET: api/attraction/seed?nrItems=10
         [HttpGet]
+        [ActionName("SeedAttractions")]
         public async Task<IActionResult> Seed(int nrItems = 10)
         {
             await _service.SeedAsync(nrItems);
 
             return Ok($"Seeded {nrItems} attractions successfully");
         }
+
+        [HttpDelete]
+        [ActionName("RemoveSeeded")]
+        public async Task<IActionResult> RemoveSeeded()
+        {
+            await _service.RemoveSeededAsync();
+            return Ok("Seeded attractions removed successfully");
+        }   
+
+
+        //GET: api/attraction/seed?nrItems=10
 
         public AttractionController(
             ILogger<AttractionController> logger,
@@ -44,6 +55,8 @@ namespace AppWebApi.Controllers
             _logger = logger;
             _service = service;
         }
+
+
     }
 
 }

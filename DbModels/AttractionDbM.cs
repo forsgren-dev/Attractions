@@ -8,9 +8,8 @@ using Models;
 namespace DbModels;
 
 [Table("Attractions", Schema = "supusr")]
-public class AttractionDbM : Attraction
+public class AttractionDbM : Attraction, ISeed<AttractionDbM>
 {
-
     [Key]
     public override Guid AttractionId { get; set; }
 
@@ -18,6 +17,7 @@ public class AttractionDbM : Attraction
      public override List<ICategory> Categories
 
     {
+    
         get => CategoryDbM.Cast<ICategory>().ToList();
         set => throw new NotImplementedException();
     }
@@ -40,7 +40,7 @@ public class AttractionDbM : Attraction
         set => throw new NotImplementedException();
     }
 
-    //public Guid AddressId { get; set; }
+    // public Guid AddressId { get; set; }
 
     [ForeignKey("AddressId")]
     public AddressDbM AddressDbM { get; set; }
@@ -52,9 +52,10 @@ public class AttractionDbM : Attraction
 
     #region seeding
     
-    public override Attraction Seed(SeedGenerator seeder)
+    public override AttractionDbM Seed(SeedGenerator seeder)
     {
         base.Seed(seeder);
+        Seeded = true;
         return this;
     }
 

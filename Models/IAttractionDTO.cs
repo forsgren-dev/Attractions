@@ -1,13 +1,13 @@
 namespace Models;
 
-public class AttractionListItem : IAttractionListItem
+public interface IAttractionDTO
 {
     public string AttractionName { get; set; }
     public string AttractionDescription { get; set; }
-    public IAttractionAddressItem Address { get; set; }
+    public IAttractionAddressDTO Address { get; set; }
 }
 
-public class AttractionAddressItem : IAttractionAddressItem
+public interface IAttractionAddressDTO
 {
     public string Street { get; set; }
     public string PostalCode { get; set; }

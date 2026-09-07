@@ -11,7 +11,8 @@ public class AttractionServiceDb : IAttractionService
     private readonly ILogger<AttractionServiceDb> _logger = null;
 
     public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
-    public Task<List<AttractionListItem>> ListAsync() => _repo.ListAsync();
+    public Task RemoveSeededAsync() => _repo.RemoveSeededAsync();
+    public Task<List<AttractionDTO>> ListAsync() => _repo.ListAsync();
 
     #region constructors
     public AttractionServiceDb(AttractionDbRepos repo)

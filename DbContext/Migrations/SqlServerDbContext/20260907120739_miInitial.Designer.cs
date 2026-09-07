@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260904133209_miInitial")]
+    [Migration("20260907120739_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -52,6 +52,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("PostalCode")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Street")
                         .HasColumnType("varchar(200)");
 
@@ -68,7 +71,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AddressId")
+                    b.Property<Guid?>("AddressId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AttractionDescription")
@@ -168,6 +171,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserName")
                         .HasColumnType("varchar(200)");
 
@@ -206,9 +212,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     b.HasOne("DbModels.AddressDbM", "AddressDbM")
                         .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AddressId");
 
                     b.Navigation("AddressDbM");
                 });
