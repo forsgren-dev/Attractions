@@ -29,30 +29,64 @@ namespace AppWebApi.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
         {
-            var result = await _service.ListAsync(pageSize, pageNumber);
+            try
+            {
+                var result = await _service.ListAsync(pageSize, pageNumber);
 
-            return Ok(result);
+                _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(List)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [ActionName("SeedAttractions")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Seed(int nrItems = 10)
         {
-            await _service.SeedAsync(nrItems);
+            try
+            {
+                await _service.SeedAsync(nrItems);
 
-            return Ok($"Seeded {nrItems} attractions successfully");
+                _logger.LogInformation($"{nameof(Seed)} succeeded. Number of items: {nrItems}");
+                return Ok($"Seeded {nrItems} attractions successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(Seed)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
         [ActionName("RemoveAttractions")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> RemoveAll(bool Seeded = true)
         {
-            if (!Seeded)
+            try
             {
-                return BadRequest("Invalid request. Seeded parameter must be true.");
+                if (!Seeded)
+                {
+                    const string message = "Invalid request. Only seeded attractions can be removed.";
+                    _logger.LogError($"{nameof(RemoveAll)} failed: {message}");
+                    return BadRequest(message);
+                }
+
+                await _service.RemoveSeededAsync();
+                _logger.LogInformation($"{nameof(RemoveAll)} succeeded.");
+                return Ok("Seeded attractions removed successfully");
             }
-            await _service.RemoveSeededAsync();
-            return Ok("Seeded attractions removed successfully");
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(RemoveAll)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
         }   
 
 
