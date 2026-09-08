@@ -27,18 +27,18 @@ namespace AppWebApi.Controllers
         [ActionName("ListAllAttractions")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
+        public async Task<IActionResult> ListAll(int pageNumber = 0, int pageSize = 10)
         {
             try
             {
                 var result = await _service.ListAsync(pageSize, pageNumber);
 
-                _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                _logger.LogInformation($"{nameof(ListAll)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(List)} failed: {ex.Message}");
+                _logger.LogError($"{nameof(ListAll)} failed: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }

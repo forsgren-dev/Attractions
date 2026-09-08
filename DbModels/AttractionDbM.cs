@@ -13,11 +13,11 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
     [Key]
     public override Guid AttractionId { get; set; }
 
-     [NotMapped]
-     public override List<ICategory> Categories
+    [NotMapped]
+    public override List<ICategory> Categories
 
     {
-    
+
         get => CategoryDbM.Cast<ICategory>().ToList();
         set => throw new NotImplementedException();
     }
@@ -39,12 +39,9 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
         get => AddressDbM;
         set => throw new NotImplementedException();
     }
-
-    // public Guid AddressId { get; set; }
-
     #region foreign key
     public AddressDbM AddressDbM { get; set; }
-    
+
     #endregion
 
     #region constructor
@@ -53,7 +50,7 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
     #endregion
 
     #region seeding
-    
+
     public override AttractionDbM Seed(SeedGenerator seeder)
     {
         base.Seed(seeder);

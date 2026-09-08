@@ -20,9 +20,6 @@ public class CommentDbM : Comment
         get => AttractionDbM;
         set => throw new NotImplementedException();
     }
-
-    public Guid AttractionId { get; set; }
-
     #region foreign key
     public AttractionDbM AttractionDbM { get; set; }
     #endregion
@@ -33,9 +30,6 @@ public class CommentDbM : Comment
         get => UserDbM;
         set => throw new NotImplementedException();
     }
-
-    //public Guid UserId { get; set; }
-
    #region foreign key
     public UserDbM UserDbM { get; set; }
 

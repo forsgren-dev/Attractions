@@ -25,8 +25,6 @@ namespace AppWebApi.Controllers
         readonly Encryptions _encryptions = null;
         readonly DatabaseConnections _dbConnections = null;
         readonly IAdminService _service;
-        readonly IAttractionService _attractionService;
-        readonly IUserService _userService;
         
 
 
@@ -75,11 +73,10 @@ namespace AppWebApi.Controllers
         {
             try
             {
-                await _attractionService.SeedAsync(nrItems);
-                await _userService.SeedAsync(nrItems);
+                await _service.SeedAsync(nrItems);
 
                 _logger.LogInformation($"{nameof(Seed)} succeeded. Number of items: {nrItems}");
-                return Ok($"Seeded {nrItems} attractions successfully");
+                return Ok($"Seeded {nrItems} database items successfully");
             }
             catch (Exception ex)
             {
@@ -151,9 +148,7 @@ namespace AppWebApi.Controllers
                     IOptions<JwtOptions> jwtOptions,
                     IOptions<VersionOptions> versionOptions,
                     Encryptions encryptions, DatabaseConnections dbConnections,
-                    IAdminService service,
-                    IAttractionService attractionService,
-                    IUserService userService)
+                    IAdminService service)
         {
             _logger = logger;
 
@@ -167,8 +162,6 @@ namespace AppWebApi.Controllers
             _dbConnections = dbConnections;
 
             _service = service;
-            _attractionService = attractionService;
-            _userService = userService;
         }
     }
 }

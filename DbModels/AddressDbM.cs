@@ -27,9 +27,8 @@ public class AddressDbM : Address
         get => CityDbM.CountryDbM;
         set => throw new NotImplementedException();
     }
-
-   
    #region foreign key
+   [Required]
     public CityDbM CityDbM { get; set; }
 
     #endregion

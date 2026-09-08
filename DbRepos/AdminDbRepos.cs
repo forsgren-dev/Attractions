@@ -6,6 +6,7 @@ using Seido.Utilities.SeedGenerator;
 using DbModels;
 using DbContext;
 using Configuration;
+using Models;
 
 namespace DbRepos;
 
@@ -16,68 +17,104 @@ public class AdminDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    // public async Task SeedAsync(int nrItems)
-    // {
-    //     }
+    public async Task SeedAsync(int nrItems)
+    {
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+        var usedUserNames = new HashSet<string>(
+            await _dbContext.Users.Select(u => u.UserName).ToListAsync(),
+            StringComparer.OrdinalIgnoreCase);
+
+        for (int i = 0; i < nrItems; i++)
+        {
+            var countryName = seeder.Country;
+            var address = SeedAddress(seeder, countryName);
+
+            var attraction = new AttractionDbM
+            {
+                AttractionId = Guid.NewGuid(),
+                AttractionName = seeder.AttractionName,
+                AttractionDescription = seeder.LatinSentence,
+                Seeded = true,
+                AddressDbM = address,
+                CategoryDbM = SeedCategories(seeder)
+            };
+
+            var user = new UserDbM
+            {
+                UserId = Guid.NewGuid(),
+                UserName = CreateUniqueUserName(seeder, usedUserNames),
+                Seeded = true
+            };
+
+            _dbContext.Attractions.Add(attraction);
+            _dbContext.Users.Add(user);
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
 
     public async Task RemoveSeededAsync()
     {
-        var seededAttractions = await _dbContext.Attractions
-            .Include(a => a.AddressDbM)
-                .ThenInclude(a => a.CityDbM)
-                    .ThenInclude(c => c.CountryDbM)
-            .Include(a => a.CategoryDbM)
-            .Include(a => a.CommentDbM)
-            .Where(a => a.Seeded == true)
-            .ToListAsync();
+        var seededAttractions = await _dbContext.Attractions.Where(a => a.Seeded == true).ToListAsync();
 
-        var seededAddresses = seededAttractions
-            .Where(a => a.AddressDbM is not null)
-            .Select(a => a.AddressDbM)
-            .Distinct()
-            .ToList();
-
-        var seededCities = seededAddresses
-            .Where(a => a.CityDbM is not null)
-            .Select(a => a.CityDbM)
-            .Distinct()
-            .ToList();
-
-        var seededCountries = seededCities
-            .Where(c => c.CountryDbM is not null)
-            .Select(c => c.CountryDbM)
-            .Distinct()
-            .ToList();
-
-        var seededCategories = seededAttractions
-            .SelectMany(a => a.CategoryDbM)
-            .Distinct()
-            .ToList();
-
-        var attractionComments = seededAttractions
-            .SelectMany(a => a.CommentDbM)
-            .Distinct()
-            .ToList();
-
-        var seededUsers = await _dbContext.Users
-            .Where(u => u.Seeded == true)
-            .Include(u => u.CommentDbM)
-            .ToListAsync();
-
-        var userComments = seededUsers
-            .SelectMany(u => u.CommentDbM)
-            .Distinct()
-            .ToList();
-
-        _dbContext.Comments.RemoveRange(attractionComments.Union(userComments));
         _dbContext.Attractions.RemoveRange(seededAttractions);
-        _dbContext.Categories.RemoveRange(seededCategories);
-        _dbContext.Addresses.RemoveRange(seededAddresses);
-        _dbContext.Cities.RemoveRange(seededCities);
-        _dbContext.Countries.RemoveRange(seededCountries);
-        _dbContext.Users.RemoveRange(seededUsers);
-
         await _dbContext.SaveChangesAsync();
+    }
+
+    private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
+    {
+        var country = new CountryDbM
+        {
+            CountryId = Guid.NewGuid(),
+            CountryName = countryName
+        };
+
+        var city = new CityDbM
+        {
+            CityId = Guid.NewGuid(),
+            CityName = seeder.City(countryName),
+            CountryDbM = country
+        };
+
+        return new AddressDbM
+        {
+            AddressId = Guid.NewGuid(),
+            Street = seeder.StreetAddress(countryName),
+            PostalCode = seeder.ZipCode.ToString(),
+            CityDbM = city
+        };
+    }
+
+    private List<CategoryDbM> SeedCategories(SeedGenerator seeder)
+    {
+        var nrOfCategories = seeder.Next(1, 4);
+        var attractionCategories = Enum.GetValues<CategoryType>()
+            .OrderBy(_ => seeder.Next())
+            .Take(nrOfCategories);
+
+        return attractionCategories.Select(categoryType => new CategoryDbM
+        {
+            CategoryId = Guid.NewGuid(),
+            CategoryType = categoryType
+        }).ToList();
+    }
+
+    private static string CreateUniqueUserName(SeedGenerator seeder, HashSet<string> usedUserNames)
+    {
+        const int maxAttempts = 1000;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            var userName = $"{seeder.FirstName}+{seeder.Next(10, 9000)}";
+
+            if (usedUserNames.Add(userName))
+            {
+                return userName;
+            }
+        }
+
+        throw new InvalidOperationException("Could not create a unique username.");
     }
 
     public AdminDbRepos(

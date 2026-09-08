@@ -60,15 +60,15 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CountryDbMCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CityName = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cities", x => x.CityId);
                     table.ForeignKey(
-                        name: "FK_Cities_Countries_CountryId",
-                        column: x => x.CountryId,
+                        name: "FK_Cities_Countries_CountryDbMCountryId",
+                        column: x => x.CountryDbMCountryId,
                         principalSchema: "supusr",
                         principalTable: "Countries",
                         principalColumn: "CountryId",
@@ -81,7 +81,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CityDbMCityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CityDbMCityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Street = table.Column<string>(type: "varchar(200)", nullable: true),
                     PostalCode = table.Column<string>(type: "varchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
@@ -94,7 +94,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                         column: x => x.CityDbMCityId,
                         principalSchema: "supusr",
                         principalTable: "Cities",
-                        principalColumn: "CityId");
+                        principalColumn: "CityId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,7 +121,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 });
 
             migrationBuilder.CreateTable(
-                name: "AttractionCategoriesDbM",
+                name: "AttractionDbMCategoryDbM",
                 schema: "supusr",
                 columns: table => new
                 {
@@ -129,16 +130,16 @@ namespace DbContext.Migrations.SqlServerDbContext
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AttractionCategoriesDbM", x => new { x.AttractionDbMAttractionId, x.CategoryDbMCategoryId });
+                    table.PrimaryKey("PK_AttractionDbMCategoryDbM", x => new { x.AttractionDbMAttractionId, x.CategoryDbMCategoryId });
                     table.ForeignKey(
-                        name: "FK_AttractionCategoriesDbM_Attractions_AttractionDbMAttractionId",
+                        name: "FK_AttractionDbMCategoryDbM_Attractions_AttractionDbMAttractionId",
                         column: x => x.AttractionDbMAttractionId,
                         principalSchema: "supusr",
                         principalTable: "Attractions",
                         principalColumn: "AttractionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AttractionCategoriesDbM_Categories_CategoryDbMCategoryId",
+                        name: "FK_AttractionDbMCategoryDbM_Categories_CategoryDbMCategoryId",
                         column: x => x.CategoryDbMCategoryId,
                         principalSchema: "supusr",
                         principalTable: "Categories",
@@ -152,7 +153,6 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CommentText = table.Column<string>(type: "varchar(200)", nullable: true)
@@ -181,9 +181,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CityDbMCityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttractionCategoriesDbM_CategoryDbMCategoryId",
+                name: "IX_AttractionDbMCategoryDbM_CategoryDbMCategoryId",
                 schema: "supusr",
-                table: "AttractionCategoriesDbM",
+                table: "AttractionDbMCategoryDbM",
                 column: "CategoryDbMCategoryId");
 
             migrationBuilder.CreateIndex(
@@ -193,18 +193,10 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "AddressDbMAddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cities_CityName_CountryId",
+                name: "IX_Cities_CountryDbMCountryId",
                 schema: "supusr",
                 table: "Cities",
-                columns: new[] { "CityName", "CountryId" },
-                unique: true,
-                filter: "[CityName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cities_CountryId",
-                schema: "supusr",
-                table: "Cities",
-                column: "CountryId");
+                column: "CountryDbMCountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_AttractionDbMAttractionId",
@@ -231,7 +223,7 @@ namespace DbContext.Migrations.SqlServerDbContext
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AttractionCategoriesDbM",
+                name: "AttractionDbMCategoryDbM",
                 schema: "supusr");
 
             migrationBuilder.DropTable(

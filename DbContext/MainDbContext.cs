@@ -47,20 +47,6 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         #region override modelbuilder
 
-        modelBuilder.Entity<AttractionDbM>()
-            .HasMany(a => a.CategoryDbM)
-            .WithMany(c => c.AttractionDbM)
-            .UsingEntity(j => j.ToTable("AttractionCategoriesDbM", "supusr"));
-
-        modelBuilder.Entity<CityDbM>()
-            .HasOne(c => c.CountryDbM)
-            .WithMany(c => c.CityDbM)
-            .HasForeignKey(c => c.CountryId);
-
-        modelBuilder.Entity<CityDbM>()
-            .HasIndex(c => new { c.CityName, c.CountryId })
-            .IsUnique();
-
         modelBuilder.Entity<UserDbM>()
             .HasIndex(u => u.UserName)
             .IsUnique();

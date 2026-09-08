@@ -131,7 +131,6 @@ public class AttractionDbRepos
         {
             CityId = Guid.NewGuid(),
             CityName = seeder.City(countryName),
-            CountryId = country.CountryId,
             CountryDbM = country
         };
 

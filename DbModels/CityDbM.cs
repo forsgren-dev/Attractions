@@ -20,10 +20,8 @@ public class CityDbM : City
         get => CountryDbM;
         set => throw new NotImplementedException();
     }
-
-    public Guid CountryId { get; set; }
-
     #region foreign key
+    [Required]
     public CountryDbM CountryDbM { get; set; }
     
     #endregion
