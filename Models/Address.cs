@@ -49,7 +49,7 @@ public class Address : IAddress, IEquatable<Address>, ISeed<Address>
             && Country?.CountryId == other.Country?.CountryId;
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return Equals(obj as Address);
     }

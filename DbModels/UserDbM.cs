@@ -8,7 +8,7 @@ using Models;
 namespace DbModels;
 
 [Table("Users", Schema = "supusr")]
-public class UserDbM : User
+public class UserDbM : User, ISeed<UserDbM>
 {
     
  [Key]
@@ -22,8 +22,12 @@ public class UserDbM : User
     }
 
     public List<CommentDbM> CommentDbM { get; set; } = new();
-    
 
+    UserDbM ISeed<UserDbM>.Seed(SeedGenerator seeder)
+    {
+        base.Seed(seeder);
+        return this;
+    }
 }
    
 
