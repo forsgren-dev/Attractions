@@ -6,9 +6,9 @@ using Newtonsoft.Json;
 using Services;
 using Configuration;
 using Configuration.Options;
-using Microsoft.Extensions.Options;
-using Models;
 using Models.DTO;
+using Models;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,16 +16,16 @@ namespace AppWebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class AttractionController : Controller
+    public class UserController : Controller
     {
-        readonly ILogger<AttractionController> _logger;
+        readonly ILogger<UserController> _logger;
 
-        readonly IAttractionService _service;
+        readonly IUserService _service;
 
-        //GET: api/attraction/list
+
         [HttpGet]
-        [ActionName("ListAllAttractions")]
-        [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
+        [ActionName("ListUsers")]
+        [ProducesResponseType(typeof(ResponsePageDto<IUser>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
         {
@@ -44,9 +44,10 @@ namespace AppWebApi.Controllers
         }
 
 
+
         [HttpGet()]
         [ActionName("ReadItem")]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<IUser>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
         public async Task<IActionResult> ReadItem(Guid id)
@@ -54,10 +55,10 @@ namespace AppWebApi.Controllers
             try
             {
                 _logger.LogInformation($"{nameof(ReadItem)}: {id}");
-                var resp = await _service.ReadAttractionAsync(id);
+                var resp = await _service.ReadUserAsync(id);
 
                 if (resp.Item is null)
-                    return NotFound($"No attraction found with id {id}");
+                    return NotFound($"No user found with id {id}");
 
                 return Ok(resp);
             }
@@ -68,11 +69,9 @@ namespace AppWebApi.Controllers
             }
         }
 
-        //GET: api/attraction/seed?nrItems=10
-
-        public AttractionController(
-            ILogger<AttractionController> logger,
-            IAttractionService service)
+        public UserController(
+                   ILogger<UserController> logger,
+                   IUserService service)
         {
             _logger = logger;
             _service = service;
@@ -80,5 +79,7 @@ namespace AppWebApi.Controllers
 
 
     }
+
+
 
 }

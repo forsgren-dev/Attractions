@@ -13,8 +13,10 @@ public class UserServiceDb : IUserService
       public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
 
       public Task<ResponsePageDto<IUser>> ListAsync(int pageSize, int pageNumber) => _repo.ListAsync(pageSize, pageNumber);
-      
-        #region constructors
+
+    public Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id) => _repo.ReadUserAsync(id);
+
+    #region constructors
     public UserServiceDb(
         UserDbRepos repo, 
         ILogger<UserServiceDb> logger)

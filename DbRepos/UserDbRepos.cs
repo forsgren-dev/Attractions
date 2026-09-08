@@ -40,6 +40,24 @@ public class UserDbRepos
         };
     }
 
+    public async Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id)
+    {
+        var item = await _dbContext.Users
+        .AsNoTracking()
+        .Where(a => a.UserId == id)
+        .FirstOrDefaultAsync<IUser>();
+
+    
+        return new ResponseItemDto<IUser>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            Item = item
+        };
+    }
+          
+
     public async Task SeedAsync(int nrItems)
     {
         var fn = Path.GetFullPath(_seedSource);
@@ -68,11 +86,18 @@ public class UserDbRepos
     private static string CreateUniqueUserName(SeedGenerator seeder, HashSet<string> usedUserNames)
     {
         string userName;
-
-        do
+        int userSuffix = 1;
+        
+        userName = $"{seeder.FirstName} {seeder.LastName}";
+        if (!usedUserNames.Add(userName))
         {
-            userName = $"{seeder.FirstName}+{seeder.Next(10, 9000)}";
-        } while (!usedUserNames.Add(userName));
+            do
+            {
+                userName = $"{seeder.FirstName}_{seeder.LastName}{userSuffix}";
+                userSuffix++;
+            } while (!usedUserNames.Add(userName));
+        }
+        ;
 
         return userName;
     }

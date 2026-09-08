@@ -88,6 +88,26 @@ namespace AppWebApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [ActionName("RemoveSeededData")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> RemoveSeededData()
+        {
+            try
+            {
+                await _service.RemoveSeededAsync();
+
+                _logger.LogInformation($"{nameof(RemoveSeededData)} succeeded.");
+                return Ok("Seeded data removed successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(RemoveSeededData)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
         //GET: api/admin/seed?count={count}
         // [HttpGet()]
         // [ActionName("Seed")]

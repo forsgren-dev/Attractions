@@ -12,15 +12,22 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DbRepos;
 
-public class AttractionDbRepos 
+public class AttractionDbRepos
 {
     private const string _seedSource = "./app-seeds.json";
     private readonly ILogger<AttractionDbRepos> _logger;
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
+   // var query = _dbContext.Attractions
+    // .AsNoTracking()
+    // .Include(a => a.AddressDbM)
+    // .ThenInclude(ad => ad.CityDbM)
+    // .ThenInclude(c => c.CountryDbM);
 
-    public async Task<ResponsePageDto<AttractionDto>> ListAsync(int pageSize, int pageNumber)
+    // För ren listning så använder jag mina DTO:s för att undvika att skicka med onödig data och för att kunna forma datan. 
+    // Jag använder LINQ för att projicera data från databasen till mina DTO-objekt.
+    public async Task<ResponsePageDto<AttractionDto>> ListAllAttractionsAsync(int pageSize, int pageNumber)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -32,9 +39,10 @@ public class AttractionDbRepos
             .Take(pageSize)
             .Select(a => new AttractionDto
             {
+                AttractionId = a.AttractionId,
                 AttractionName = a.AttractionName,
                 AttractionDescription = a.AttractionDescription,
-                Address = new AttractionAddressDto  
+                Address = new AttractionAddressDto
                 {
                     Street = a.AddressDbM.Street,
                     PostalCode = a.AddressDbM.PostalCode,
@@ -46,12 +54,43 @@ public class AttractionDbRepos
 
         return new ResponsePageDto<AttractionDto>
         {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
             PageNumber = pageNumber,
             PageSize = pageSize,
             TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
             DbItemsCount = totalCount,
             Items = attractions
-        };   
+        };
+    }
+
+    public async Task<ResponseItemDto<AttractionDto>> ReadAttractionAsync(Guid id)
+    {
+        var item = await _dbContext.Attractions
+            .AsNoTracking()
+            .Select(a => new AttractionDto
+            {
+                AttractionId = a.AttractionId,
+                AttractionName = a.AttractionName,
+                AttractionDescription = a.AttractionDescription,
+                Address = new AttractionAddressDto
+                {
+                    Street = a.AddressDbM.Street,
+                    PostalCode = a.AddressDbM.PostalCode,
+                    City = a.AddressDbM.CityDbM.CityName,
+                    Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
+                }
+            })
+            .FirstOrDefaultAsync(a => a.AttractionId == id);
+
+        return new ResponseItemDto<AttractionDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            Item = item
+        };
     }
 
     public async Task SeedAsync(int nrItems)
@@ -79,16 +118,6 @@ public class AttractionDbRepos
 
         await _dbContext.SaveChangesAsync();
     }
-
-    public async Task RemoveSeededAsync()
-    {
-        var seededAttractions = await _dbContext.Attractions.Where(a => a.Seeded == true).ToListAsync();
-        
-        _dbContext.Attractions.RemoveRange(seededAttractions);
-        await _dbContext.SaveChangesAsync();
-    }
-
-        
 
     private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
     {

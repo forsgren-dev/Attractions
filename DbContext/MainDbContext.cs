@@ -29,6 +29,7 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<AddressDbM> Addresses { get; set; }
     public DbSet<CityDbM> Cities { get; set; }
     public DbSet<CountryDbM> Countries { get; set; }
+    public DbSet<CategoryDbM> Categories { get; set; }
     public DbSet<CommentDbM> Comments { get; set; }
     public DbSet<UserDbM> Users { get; set; }
     #endregion

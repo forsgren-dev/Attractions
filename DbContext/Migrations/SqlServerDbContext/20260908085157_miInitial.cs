@@ -61,18 +61,18 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CountryDbMCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CityName = table.Column<string>(type: "varchar(200)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cities", x => x.CityId);
                     table.ForeignKey(
-                        name: "FK_Cities_Countries_CountryDbMCountryId",
-                        column: x => x.CountryDbMCountryId,
+                        name: "FK_Cities_Countries_CountryId",
+                        column: x => x.CountryId,
                         principalSchema: "supusr",
                         principalTable: "Countries",
-                        principalColumn: "CountryId");
+                        principalColumn: "CountryId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,10 +201,10 @@ namespace DbContext.Migrations.SqlServerDbContext
                 filter: "[CityName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cities_CountryDbMCountryId",
+                name: "IX_Cities_CountryId",
                 schema: "supusr",
                 table: "Cities",
-                column: "CountryDbMCountryId");
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_AttractionDbMAttractionId",
@@ -217,6 +217,14 @@ namespace DbContext.Migrations.SqlServerDbContext
                 schema: "supusr",
                 table: "Comments",
                 column: "UserDbMUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserName",
+                schema: "supusr",
+                table: "Users",
+                column: "UserName",
+                unique: true,
+                filter: "[UserName] IS NOT NULL");
         }
 
         /// <inheritdoc />

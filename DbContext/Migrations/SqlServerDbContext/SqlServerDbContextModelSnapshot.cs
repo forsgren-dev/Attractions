@@ -110,15 +110,12 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CityName")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<Guid?>("CountryDbMCountryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CountryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CityId");
 
-                    b.HasIndex("CountryDbMCountryId");
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("CityName", "CountryId")
                         .IsUnique()
@@ -182,6 +179,10 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
+
                     b.ToTable("Users", "supusr");
                 });
 
@@ -222,7 +223,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     b.HasOne("DbModels.CountryDbM", "CountryDbM")
                         .WithMany("CityDbM")
-                        .HasForeignKey("CountryDbMCountryId");
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CountryDbM");
                 });

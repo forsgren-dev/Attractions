@@ -580,7 +580,7 @@ namespace Seido.Utilities.SeedGenerator
                 Names = new SeedNames
                 {
                     jsonFirstNames = "Harry, Lord, Hermione, Albus, Severus, Ron, Draco, Frodo, Gandalf, Sam, Peregrin, Saruman",
-                    jsonLastNames = "Potter, Voldemort, Granger, Dumbledore, Snape, Malfoy, Baggins, the Gray, Gamgee, Took, the White",
+                    jsonLastNames = "Potter, Voldemort, Granger, Dumbledore, Snape, Malfoy, Baggins, the_Gray, Gamgee, Took, the_White, the_Globetrotter, the_Traveler, the_Wanderer, the_Explorer, the_Adventurer, the_Seeker, the_Pathfinder, the_Voyager, the_Nomad, the_Pilgrim",
                     jsonPetNames = "Max, Charlie, Cooper, Milo, Rocky, Wanda, Teddy, Duke, Leo, Max, Simba",
                     jsonAttractionPrefixes = "The Great, The Old, The New, The Historic, The Legendary, The",
                     jsonAttractionNames = "Nobel, Royal, Swedish, Danish, Norse, Finnish, Liberty, Nordic, Viking, King's, Queen's, Northern, Forsgren, Astrid Lindgren, Scandinavian, Baltic",
