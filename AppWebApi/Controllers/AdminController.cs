@@ -25,12 +25,9 @@ namespace AppWebApi.Controllers
         readonly Encryptions _encryptions = null;
         readonly DatabaseConnections _dbConnections = null;
         readonly IAdminService _service;
+        readonly IAttractionService _attractionService;
+        readonly IUserService _userService;
         
-
-
-       
-
-       
 
 
         //GET: api/admin/environment
@@ -69,6 +66,28 @@ namespace AppWebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        [ActionName("SeedDatabase")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> Seed(int nrItems = 10)
+        {
+            try
+            {
+                await _attractionService.SeedAsync(nrItems);
+                await _userService.SeedAsync(nrItems);
+
+                _logger.LogInformation($"{nameof(Seed)} succeeded. Number of items: {nrItems}");
+                return Ok($"Seeded {nrItems} attractions successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(Seed)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
         //GET: api/admin/seed?count={count}
         // [HttpGet()]
         // [ActionName("Seed")]
@@ -112,7 +131,8 @@ namespace AppWebApi.Controllers
                     IOptions<JwtOptions> jwtOptions,
                     IOptions<VersionOptions> versionOptions,
                     Encryptions encryptions, DatabaseConnections dbConnections,
-                    IAdminService service)
+                    IAdminService service,
+                    IAttractionService attractionService)
         {
             _logger = logger;
 
@@ -126,6 +146,7 @@ namespace AppWebApi.Controllers
             _dbConnections = dbConnections;
 
             _service = service;
+            _attractionService = attractionService;
         }
     }
 }

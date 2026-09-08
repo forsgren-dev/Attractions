@@ -43,26 +43,6 @@ namespace AppWebApi.Controllers
             }
         }
 
-        [HttpGet]
-        [ActionName("SeedAttractions")]
-        [ProducesResponseType(typeof(string), 200)]
-        [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Seed(int nrItems = 10)
-        {
-            try
-            {
-                await _service.SeedAsync(nrItems);
-
-                _logger.LogInformation($"{nameof(Seed)} succeeded. Number of items: {nrItems}");
-                return Ok($"Seeded {nrItems} attractions successfully");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"{nameof(Seed)} failed: {ex.Message}");
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpDelete]
         [ActionName("RemoveAttractions")]
         [ProducesResponseType(typeof(string), 200)]
