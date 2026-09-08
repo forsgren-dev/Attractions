@@ -18,7 +18,7 @@ public class UserDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<IUser>> ListAsync(int pageSize, int pageNumber)
+    public async Task<ResponsePageDto<IUser>> ListAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -30,14 +30,40 @@ public class UserDbRepos
             .Take(pageSize)
             .ToListAsync<IUser>();
 
-        return new ResponsePageDto<IUser>
+        if (flat)
         {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-            DbItemsCount = totalCount,
-            Items = users
-        };
+            return new ResponsePageDto<IUser>
+            {
+#if DEBUG
+                ConnectionString = _dbContext.dbConnection,
+#endif
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                DbItemsCount = totalCount,
+
+                Items = users.Select(u => new UserFlatDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.UserName
+                }).ToList<IUser>()
+            };
+        }
+        else
+        {
+
+            return new ResponsePageDto<IUser>
+            {
+#if DEBUG
+                ConnectionString = _dbContext.dbConnection,
+#endif
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                DbItemsCount = totalCount,
+                Items = users
+            };
+        }
     }
 
     public async Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id)
@@ -47,7 +73,7 @@ public class UserDbRepos
         .Where(a => a.UserId == id)
         .FirstOrDefaultAsync<IUser>();
 
-    
+
         return new ResponseItemDto<IUser>
         {
 #if DEBUG
@@ -56,7 +82,7 @@ public class UserDbRepos
             Item = item
         };
     }
-          
+
 
     public async Task SeedAsync(int nrItems)
     {
@@ -87,7 +113,7 @@ public class UserDbRepos
     {
         string userName;
         int userSuffix = 1;
-        
+
         userName = $"{seeder.FirstName} {seeder.LastName}";
         if (!usedUserNames.Add(userName))
         {

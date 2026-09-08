@@ -27,11 +27,11 @@ namespace AppWebApi.Controllers
         [ActionName("ListUsers")]
         [ProducesResponseType(typeof(ResponsePageDto<IUser>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0)
+        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0, bool flat = false)
         {
             try
             {
-                var result = await _service.ListAsync(pageSize, pageNumber);
+                var result = await _service.ListAsync(pageSize, pageNumber, flat);
 
                 _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
@@ -42,7 +42,6 @@ namespace AppWebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
 
 
         [HttpGet()]
