@@ -60,6 +60,10 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
             .HasIndex(c => new { c.CityName, c.CountryId })
             .IsUnique();
 
+        modelBuilder.Entity<UserDbM>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+
         #endregion
 
         base.OnModelCreating(modelBuilder);

@@ -132,7 +132,8 @@ namespace AppWebApi.Controllers
                     IOptions<VersionOptions> versionOptions,
                     Encryptions encryptions, DatabaseConnections dbConnections,
                     IAdminService service,
-                    IAttractionService attractionService)
+                    IAttractionService attractionService,
+                    IUserService userService)
         {
             _logger = logger;
 
@@ -147,6 +148,7 @@ namespace AppWebApi.Controllers
 
             _service = service;
             _attractionService = attractionService;
+            _userService = userService;
         }
     }
 }

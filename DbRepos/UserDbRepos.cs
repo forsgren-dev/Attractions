@@ -29,7 +29,7 @@ public class UserDbRepos
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
             .ToListAsync<IUser>();
-            
+
         return new ResponsePageDto<IUser>
         {
             PageNumber = pageNumber,
@@ -37,21 +37,25 @@ public class UserDbRepos
             TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
             DbItemsCount = totalCount,
             Items = users
-        };   
+        };
     }
 
-        public async Task SeedAsync(int nrItems)
+    public async Task SeedAsync(int nrItems)
     {
         var fn = Path.GetFullPath(_seedSource);
         var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+        var usedUserNames = new HashSet<string>(
+            await _dbContext.Users.Select(u => u.UserName).ToListAsync(),
+            StringComparer.OrdinalIgnoreCase);
 
         for (int i = 0; i < nrItems; i++)
         {
+            var userName = CreateUniqueUserName(seeder, usedUserNames);
 
             var user = new UserDbM
             {
                 UserId = Guid.NewGuid(),
-                UserName = $"{seeder.FirstName}+{seeder.Next(10, 9000)}",
+                UserName = userName,
                 Seeded = true
             };
 
@@ -59,6 +63,18 @@ public class UserDbRepos
         }
 
         await _dbContext.SaveChangesAsync();
+    }
+
+    private static string CreateUniqueUserName(SeedGenerator seeder, HashSet<string> usedUserNames)
+    {
+        string userName;
+
+        do
+        {
+            userName = $"{seeder.FirstName}+{seeder.Next(10, 9000)}";
+        } while (!usedUserNames.Add(userName));
+
+        return userName;
     }
 
 
