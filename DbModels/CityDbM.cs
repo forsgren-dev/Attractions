@@ -8,7 +8,7 @@ using Models;
 namespace DbModels;
 
 [Table("Cities", Schema = "supusr")]
-public class CityDbM : City
+public class CityDbM : City, IEquatable<CityDbM>
 {
     
     [Key]
@@ -34,6 +34,20 @@ public class CityDbM : City
     }
 
     public List<AddressDbM> AddressDbM { get; set; } = new();
+
+    public bool Equals(CityDbM other) =>
+        StringComparer.OrdinalIgnoreCase.Equals(CityName, other?.CityName)
+        && StringComparer.OrdinalIgnoreCase.Equals(
+            CountryDbM?.CountryName,
+            other?.CountryDbM?.CountryName);
+
+    public override bool Equals(object obj) =>
+        Equals(obj as CityDbM);
+
+    public override int GetHashCode() =>
+        HashCode.Combine(
+            StringComparer.OrdinalIgnoreCase.GetHashCode(CityName ?? string.Empty),
+            StringComparer.OrdinalIgnoreCase.GetHashCode(CountryDbM?.CountryName ?? string.Empty));
     
 
 }
