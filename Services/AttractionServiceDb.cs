@@ -11,7 +11,7 @@ public class AttractionServiceDb : IAttractionService
     private readonly ILogger<AttractionServiceDb> _logger = null;
 
     public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
-    public Task<ResponsePageDto<AttractionDto>> ListAsync(int pageSize, int pageNumber) => _repo.ListAllAttractionsAsync(pageSize, pageNumber);
+    public Task<ResponsePageDto<AttractionDto>> ListAttractionsAsync(int pageSize, int pageNumber) => _repo.ListAllAttractionsAsync(pageSize, pageNumber);
 
     public Task<ResponseItemDto<AttractionDto>> ReadAttractionAsync(Guid id) => _repo.ReadAttractionAsync(id);
 
