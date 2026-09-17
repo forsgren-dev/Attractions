@@ -110,6 +110,8 @@ public class AttractionDbRepos
             await _dbContext.Cities
                 .Include(c => c.CountryDbM)
                 .ToListAsync());
+        var categories = new HashSet<CategoryDbM>(
+            await _dbContext.Categories.ToListAsync());
 
         for (int i = 0; i < nrItems; i++)
         {
@@ -118,7 +120,7 @@ public class AttractionDbRepos
 
             var attraction = new AttractionDbM().Seed(seeder);
             attraction.AddressDbM = address;
-            attraction.CategoryDbM = SeedCategories(seeder);
+            attraction.CategoryDbM = SeedCategories(seeder, categories);
 
             _dbContext.Attractions.Add(attraction);
 
@@ -178,17 +180,31 @@ public class AttractionDbRepos
         };
     }
 
-    private List<CategoryDbM> SeedCategories(SeedGenerator seeder)
+    private List<CategoryDbM> SeedCategories(
+        SeedGenerator seeder,
+        HashSet<CategoryDbM> categories)
     {
         var nrOfCategories = seeder.Next(1, 4);
         var attractionCategories = Enum.GetValues<CategoryType>()
             .OrderBy(_ => seeder.Next())
             .Take(nrOfCategories);
 
-        return attractionCategories.Select(categoryType => new CategoryDbM
+        return attractionCategories.Select(categoryType =>
         {
-            CategoryId = Guid.NewGuid(),
-            CategoryType = categoryType
+            var categoryCheck = new CategoryDbM { CategoryType = categoryType };
+
+            if (!categories.TryGetValue(categoryCheck, out var category))
+            {
+                category = new CategoryDbM
+                {
+                    CategoryId = Guid.NewGuid(),
+                    CategoryType = categoryType
+                };
+
+                categories.Add(category);
+            }
+
+            return category;
         }).ToList();
     }
 

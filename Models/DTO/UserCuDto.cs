@@ -1,6 +1,5 @@
-namespace Models.DTO;
-
 using Newtonsoft.Json;
+namespace Models.DTO;
 
 public class UserCuDto
 {

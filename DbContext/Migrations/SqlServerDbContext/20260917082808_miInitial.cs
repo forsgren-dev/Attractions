@@ -20,6 +20,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryName = table.Column<string>(type: "varchar(200)", nullable: true),
                     CategoryType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

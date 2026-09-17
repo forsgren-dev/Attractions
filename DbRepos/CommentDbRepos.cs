@@ -6,6 +6,7 @@ using Seido.Utilities.SeedGenerator;
 using DbModels;
 using DbContext;
 using Configuration;
+using Models.DTO;
 
 namespace DbRepos;
 
@@ -15,6 +16,45 @@ public class CommentDbRepos
     private readonly ILogger<CommentDbRepos> _logger;
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
+
+    public async Task<ResponsePageDto<CommentDto>> ReadCommentsByAttractionIdAsync(
+        Guid attractionId,
+        int pageSize = 10,
+        int pageNumber = 0)
+    {
+        pageSize = Math.Max(1, pageSize);
+        pageNumber = Math.Max(0, pageNumber);
+
+        var query = _dbContext.Comments
+            .AsNoTracking()
+            .Where(c => c.AttractionDbM.AttractionId == attractionId);
+
+        var totalCount = await query.CountAsync();
+
+        var comments = await query
+            .Skip(pageNumber * pageSize)
+            .Take(pageSize)
+            .Select(c => new CommentDto
+            {
+                CommentId = c.CommentId,
+                CommentText = c.CommentText,
+                UserId = c.UserDbM.UserId,
+                UserName = c.UserDbM.UserName
+            })
+            .ToListAsync();
+
+        return new ResponsePageDto<CommentDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            DbItemsCount = totalCount,
+            Items = comments
+        };
+    }
 
     public async Task SeedAsync(int nrItems)
     {

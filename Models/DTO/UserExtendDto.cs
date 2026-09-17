@@ -1,6 +1,7 @@
+using Newtonsoft.Json;
+
 namespace Models.DTO;
 
-using Newtonsoft.Json;
 
 public class UserExtendDto
 {

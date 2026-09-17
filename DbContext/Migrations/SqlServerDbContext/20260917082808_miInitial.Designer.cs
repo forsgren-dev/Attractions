@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260914085237_miInitial")]
+    [Migration("20260917082808_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -95,6 +95,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<Guid>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("CategoryType")
                         .HasColumnType("int");

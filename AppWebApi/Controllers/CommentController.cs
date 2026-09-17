@@ -24,10 +24,25 @@ namespace AppWebApi.Controllers
 
         //GET: api/attraction/list
         [HttpGet]
-        public async Task<IActionResult> List()
+        [ProducesResponseType(typeof(ResponsePageDto<CommentDto>), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> ReadCommentsByAttractionId(
+            Guid AttractionId,
+            int pageSize = 10,
+            int pageNumber = 0)
         {
-            var result = 10; // await _service.ListAsync();
-            return Ok(result);
+            try
+            {
+                var result = await _service.ReadCommentsByAttractionIdAsync(AttractionId, pageSize, pageNumber);
+
+                _logger.LogInformation($"{nameof(ReadCommentsByAttractionId)} succeeded. AttractionId: {AttractionId}, PageSize: {pageSize}, PageNumber: {pageNumber}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(ReadCommentsByAttractionId)} failed. AttractionId: {AttractionId}, PageSize: {pageSize}, PageNumber: {pageNumber}, Error: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
         }
 
         public CommentController(

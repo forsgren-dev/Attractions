@@ -48,11 +48,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
-
-//Add InMemoryLoggerProvider logger
-builder.Services.AddInMemoryLogger();
-
 //Inject DbRepos and Services
 builder.Services.AddScoped<AdminDbRepos>();
 builder.Services.AddScoped<AttractionDbRepos>();
@@ -64,6 +59,7 @@ builder.Services.AddScoped<UserDbRepos>();
 builder.Services.AddScoped<IAdminService, AdminServiceDb>();
 builder.Services.AddScoped<IAttractionService, AttractionServiceDb>();
 builder.Services.AddScoped<IUserService, UserServiceDb>();
+builder.Services.AddScoped<ICommentService, CommentServiceDb>();
 
 var app = builder.Build();
 

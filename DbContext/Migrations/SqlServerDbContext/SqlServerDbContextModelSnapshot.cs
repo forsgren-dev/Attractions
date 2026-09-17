@@ -93,6 +93,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("varchar(200)");
+
                     b.Property<int>("CategoryType")
                         .HasColumnType("int");
 
