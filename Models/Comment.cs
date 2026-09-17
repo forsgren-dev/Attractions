@@ -2,7 +2,7 @@
 
 namespace Models;
 
-public class Comment : IComment
+public class Comment : IComment, ISeed<Comment>
 {
 
     public virtual Guid CommentId { get; set; }
@@ -12,6 +12,15 @@ public class Comment : IComment
 
     public virtual IUser User { get; set; }
 
+    public bool Seeded { get; set; } = false;
+
+    public virtual Comment Seed(SeedGenerator seeder)
+    {
+        CommentId = Guid.NewGuid();
+        CommentText = seeder.LatinSentence;
+        Seeded = true;
+        return this;
+    }
 }
 
 

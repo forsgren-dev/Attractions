@@ -48,7 +48,10 @@ public class AttractionDbRepos
                     PostalCode = a.AddressDbM.PostalCode,
                     City = a.AddressDbM.CityDbM.CityName,
                     Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
-                }
+                },
+                Categories = a.CategoryDbM
+                    .Select(c => c.CategoryType.ToString())
+                    .ToList()
             })
             .ToListAsync();
 
@@ -80,7 +83,10 @@ public class AttractionDbRepos
                     PostalCode = a.AddressDbM.PostalCode,
                     City = a.AddressDbM.CityDbM.CityName,
                     Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
-                }
+                },
+                Categories = a.CategoryDbM
+                    .Select(c => c.CategoryType.ToString())
+                    .ToList()
             })
             .FirstOrDefaultAsync(a => a.AttractionId == id);
 
@@ -95,44 +101,73 @@ public class AttractionDbRepos
 
     public async Task SeedAsync(int nrItems)
     {
+        const int batchSize = 500;
         var fn = Path.GetFullPath(_seedSource);
         var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+        var countries = new HashSet<CountryDbM>(
+            await _dbContext.Countries.ToListAsync());
+        var cities = new HashSet<CityDbM>(
+            await _dbContext.Cities
+                .Include(c => c.CountryDbM)
+                .ToListAsync());
 
         for (int i = 0; i < nrItems; i++)
         {
             var countryName = seeder.Country;
-            var address = SeedAddress(seeder, countryName);
+            var address = SeedAddress(seeder, countryName, countries, cities);
 
-            var attraction = new AttractionDbM
-            {
-                AttractionId = Guid.NewGuid(),
-                AttractionName = seeder.AttractionName,
-                AttractionDescription = seeder.LatinSentence,
-                Seeded = true,
-                AddressDbM = address,
-                CategoryDbM = SeedCategories(seeder)
-            };
+            var attraction = new AttractionDbM().Seed(seeder);
+            attraction.AddressDbM = address;
+            attraction.CategoryDbM = SeedCategories(seeder);
 
             _dbContext.Attractions.Add(attraction);
+
+            if ((i + 1) % batchSize == 0)
+            {
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         await _dbContext.SaveChangesAsync();
     }
 
-    private AddressDbM SeedAddress(SeedGenerator seeder, string countryName)
+    private AddressDbM SeedAddress(
+        SeedGenerator seeder,
+        string countryName,
+        HashSet<CountryDbM> countries,
+        HashSet<CityDbM> cities)
     {
-        var country = new CountryDbM
-        {
-            CountryId = Guid.NewGuid(),
-            CountryName = countryName
-        };
+        var countryCheck = new CountryDbM { CountryName = countryName };
 
-        var city = new CityDbM
+        if (!countries.TryGetValue(countryCheck, out var country))
         {
-            CityId = Guid.NewGuid(),
-            CityName = seeder.City(countryName),
+            country = new CountryDbM
+            {
+                CountryId = Guid.NewGuid(),
+                CountryName = countryName
+            };
+
+            countries.Add(country);
+        }
+
+        var cityName = seeder.City(countryName);
+        var cityCheck = new CityDbM
+        {
+            CityName = cityName,
             CountryDbM = country
         };
+
+        if (!cities.TryGetValue(cityCheck, out var city))
+        {
+            city = new CityDbM
+            {
+                CityId = Guid.NewGuid(),
+                CityName = cityName,
+                CountryDbM = country
+            };
+
+            cities.Add(city);
+        }
 
         return new AddressDbM
         {

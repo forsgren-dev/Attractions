@@ -155,7 +155,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CommentText = table.Column<string>(type: "varchar(200)", nullable: true)
+                    CommentText = table.Column<string>(type: "varchar(200)", nullable: true),
+                    Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

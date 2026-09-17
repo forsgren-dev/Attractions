@@ -94,14 +94,7 @@ public class UserDbRepos
 
         for (int i = 0; i < nrItems; i++)
         {
-            var userName = CreateUniqueUserName(seeder, usedUserNames);
-
-            var user = new UserDbM
-            {
-                UserId = Guid.NewGuid(),
-                UserName = userName,
-                Seeded = true
-            };
+            var user = SeedUniqueUser(seeder, usedUserNames);
 
             _dbContext.Users.Add(user);
         }
@@ -109,23 +102,21 @@ public class UserDbRepos
         await _dbContext.SaveChangesAsync();
     }
 
-    private static string CreateUniqueUserName(SeedGenerator seeder, HashSet<string> usedUserNames)
+    private static UserDbM SeedUniqueUser(SeedGenerator seeder, HashSet<string> usedUserNames)
     {
-        string userName;
-        int userSuffix = 1;
+        const int maxAttempts = 1000;
 
-        userName = $"{seeder.FirstName} {seeder.LastName}";
-        if (!usedUserNames.Add(userName))
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
-            do
-            {
-                userName = $"{seeder.FirstName}_{seeder.LastName}{userSuffix}";
-                userSuffix++;
-            } while (!usedUserNames.Add(userName));
-        }
-        ;
+            var user = new UserDbM().Seed(seeder);
 
-        return userName;
+            if (usedUserNames.Add(user.UserName))
+            {
+                return user;
+            }
+        }
+
+        throw new InvalidOperationException("Could not create a unique username.");
     }
 
 

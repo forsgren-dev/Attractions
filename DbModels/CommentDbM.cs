@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DbModels;
 
 [Table("Comments", Schema = "supusr")]
-public class CommentDbM : Comment
+public class CommentDbM : Comment, ISeed<CommentDbM>
 {
     [Key]
     public override Guid CommentId { get; set; }
@@ -34,6 +34,12 @@ public class CommentDbM : Comment
     public UserDbM UserDbM { get; set; }
 
     #endregion
+
+    public override CommentDbM Seed(SeedGenerator seeder)
+    {
+        base.Seed(seeder);
+        return this;
+    }
 }
 
 

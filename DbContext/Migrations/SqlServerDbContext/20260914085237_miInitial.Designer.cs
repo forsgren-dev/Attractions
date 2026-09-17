@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260908120256_miInitial")]
+    [Migration("20260914085237_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -134,6 +134,9 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.Property<string>("CommentText")
                         .HasColumnType("varchar(200)");
+
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("UserDbMUserId")
                         .HasColumnType("uniqueidentifier");

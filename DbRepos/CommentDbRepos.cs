@@ -16,18 +16,88 @@ public class CommentDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    // public async Task SeedAsync(int nrItems)
-    // {
-    //     //Create a seeder
-    //     var fn = Path.GetFullPath(_seedSource);
-    //     var seeder = new SeedGenerator(fn);
+    public async Task SeedAsync(int nrItems)
+    {
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
 
-    //     var creditcards = seeder.ItemsToList<CreditCardDbM>(nrItems);
-    //     _dbContext.CreditCards.AddRange(creditcards);
+        for (int i = 0; i < nrItems; i++)
+        {
+            var comment = new CommentDbM().Seed(seeder);
+            _dbContext.Comments.Add(comment);
+        }
 
-    //     //Save changes to the database
-    //     await _dbContext.SaveChangesAsync();
-    // }
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task LinkSeededCommentsAsync()
+    {
+        var comments = await _dbContext.Comments
+            .Where(c => c.Seeded)
+            .ToListAsync();
+
+        var users = await _dbContext.Users
+            .Where(u => u.Seeded)
+            .ToListAsync();
+
+        var attractions = await _dbContext.Attractions
+            .Where(a => a.Seeded)
+            .ToListAsync();
+
+        if (users.Count == 0 || attractions.Count == 0)
+        {
+            return;
+        }
+
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+
+        foreach (var comment in comments)
+        {
+            comment.UserDbM = users[seeder.Next(users.Count)];
+            comment.AttractionDbM = attractions[seeder.Next(attractions.Count)];
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task SeedAttractionCommentsAsync()
+    {
+        var fn = Path.GetFullPath(_seedSource);
+        var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+
+        var attractions = await _dbContext.Attractions
+            .Include(a => a.CommentDbM)
+            .Where(a => a.Seeded)
+            .ToListAsync();
+
+        var users = await _dbContext.Users
+            .Where(u => u.Seeded)
+            .ToListAsync();
+
+        if (users.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var attraction in attractions)
+        {
+            var maxCommentsToAdd = Math.Max(0, 20 - attraction.CommentDbM.Count);
+            var commentsToAdd = seeder.Next(0, maxCommentsToAdd + 1);
+
+            for (int i = 0; i < commentsToAdd; i++)
+            {
+                var comment = new CommentDbM().Seed(seeder);
+                comment.AttractionDbM = attraction;
+                comment.UserDbM = users[seeder.Next(0, users.Count)];
+
+                _dbContext.Comments.Add(comment);
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
 
     public CommentDbRepos(
         ILogger<CommentDbRepos> logger,

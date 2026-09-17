@@ -23,7 +23,7 @@ public class UserDbM : User, ISeed<UserDbM>
 
     public List<CommentDbM> CommentDbM { get; set; } = new();
 
-    UserDbM ISeed<UserDbM>.Seed(SeedGenerator seeder)
+    public override UserDbM Seed(SeedGenerator seeder)
     {
         base.Seed(seeder);
         return this;

@@ -31,7 +31,7 @@ namespace AppWebApi.Controllers
         {
             try
             {
-                var result = await _service.ListAsync(pageSize, pageNumber, flat);
+                var result = await _service.ListUsersAsync(pageSize, pageNumber, flat);
 
                 _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

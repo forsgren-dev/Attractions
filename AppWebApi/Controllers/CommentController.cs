@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Services;
 using Configuration;
 using Configuration.Options;
+using Models.DTO;
+using Models;
 using Microsoft.Extensions.Options;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,6 +29,18 @@ namespace AppWebApi.Controllers
             var result = 10; // await _service.ListAsync();
             return Ok(result);
         }
+
+        public CommentController(
+                           ILogger<CommentController> logger,
+                           ICommentService service)
+        {
+            _logger = logger;
+            _service = service;
+        }
+
+
     }
+
+
 
 }

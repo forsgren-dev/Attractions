@@ -13,6 +13,12 @@ public class CategoryDbM : Category
     
  [Key]
     public override Guid CategoryId { get; set; }
+
+    public string CategoryName
+    {
+        get => CategoryType.ToString();
+        set { }
+    }
     
     public List<AttractionDbM> AttractionDbM { get; set; } = new();
 

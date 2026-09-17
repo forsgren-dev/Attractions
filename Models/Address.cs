@@ -15,26 +15,7 @@ public class Address : IAddress, IEquatable<Address>, ISeed<Address>
 
     public Address Seed(SeedGenerator seeder)
     {
-        var countryName = seeder.Country;
-
-        AddressId = Guid.NewGuid();
-        Street = seeder.StreetAddress(countryName);
-        PostalCode = seeder.ZipCode.ToString();
-
-        Country = new Country
-        {
-            CountryId = Guid.NewGuid(),
-            CountryName = countryName
-        };
-
-        City = new City
-        {
-            CityId = Guid.NewGuid(),
-            CityName = seeder.City(countryName),
-            Country = Country
-        };
-
-        Seeded = true;
+        //Används ej
         return this;
     }
 

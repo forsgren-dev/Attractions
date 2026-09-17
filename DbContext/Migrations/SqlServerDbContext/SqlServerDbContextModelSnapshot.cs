@@ -132,6 +132,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CommentText")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
+
                     b.Property<Guid?>("UserDbMUserId")
                         .HasColumnType("uniqueidentifier");
 

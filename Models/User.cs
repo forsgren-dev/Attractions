@@ -10,9 +10,10 @@ public class User : IUser, ISeed<User>
 
     public virtual List<IComment> Comments { get; set; }
     public bool Seeded { get; set; } = false;
-    public User Seed(SeedGenerator seeder)
+    public virtual User Seed(SeedGenerator seeder)
     {
-        this.UserName = $"{seeder.FirstName}{seeder.FirstName}{seeder.Next(10, 9000)}";
+        UserId = Guid.NewGuid();
+        UserName = $"{seeder.FirstName}{seeder.FirstName}{seeder.Next(10, 9000)}";
         Seeded = true;
         return this;
     }
