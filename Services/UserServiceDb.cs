@@ -12,7 +12,7 @@ public class UserServiceDb : IUserService
       private readonly ILogger<UserServiceDb> _logger = null;
       public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
 
-      public Task<ResponsePageDto<IUser>> ListUsersAsync(int pageSize, int pageNumber, bool flat) => _repo.ListAsync(pageSize, pageNumber, flat);
+      public Task<ResponsePageDto<IUser>> ListUsersAsync(int pageSize, int pageNumber, bool flat) => _repo.ReadAllAsync(pageSize, pageNumber, flat);
 
     public Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id) => _repo.ReadUserAsync(id);
 

@@ -25,16 +25,56 @@ public class AttractionDbRepos
     // .ThenInclude(ad => ad.CityDbM)
     // .ThenInclude(c => c.CountryDbM);
 
-    // För ren listning så använder jag mina DTO:s för att undvika att skicka med onödig data och för att kunna forma datan. 
+    // För listning så använder jag mina DTO:s för att undvika att skicka med onödig data och för att kunna forma datan. 
     // Jag använder LINQ för att projicera data från databasen till mina DTO-objekt.
-    public async Task<ResponsePageDto<AttractionDto>> ListAllAttractionsAsync(int pageSize, int pageNumber)
+    public async Task<ResponsePageDto<AttractionDto>> ReadAttractionsAsync(
+        int pageSize,
+        int pageNumber,
+        string attractionName = null,
+        string category = null,
+        string description = null,
+        string city = null,
+        string country = null)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
 
-        var totalCount = await _dbContext.Attractions.CountAsync();
+        attractionName = attractionName?.Trim().ToLower();
+        category = category?.Trim().ToLower();
+        description = description?.Trim().ToLower();
+        city = city?.Trim().ToLower();
+        country = country?.Trim().ToLower();
 
-        var attractions = await _dbContext.Attractions
+        var query = _dbContext.Attractions.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(attractionName))
+        {
+            query = query.Where(a => a.AttractionName.ToLower().Contains(attractionName));
+        }
+
+        if (!string.IsNullOrEmpty(category))
+        {
+            query = query.Where(a => a.CategoryDbM.Any(c => c.CategoryName.ToLower().Contains(category)));
+        }
+
+        if (!string.IsNullOrEmpty(description))
+        {
+            query = query.Where(a => a.AttractionDescription.ToLower().Contains(description));
+        }
+
+        if (!string.IsNullOrEmpty(city))
+        {
+            query = query.Where(a => a.AddressDbM.CityDbM.CityName.ToLower().Contains(city));
+        }
+
+        if (!string.IsNullOrEmpty(country))
+        {
+            query = query.Where(a => a.AddressDbM.CityDbM.CountryDbM.CountryName.ToLower().Contains(country));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var attractions = await query
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
             .Select(a => new AttractionDto
@@ -68,8 +108,9 @@ public class AttractionDbRepos
         };
     }
 
-    public async Task<ResponseItemDto<AttractionDto>> ReadAttractionAsync(Guid id)
+    public async Task<ResponseItemDto<AttractionDto>> ReadItemAsync(Guid id)
     {
+        
         var item = await _dbContext.Attractions
             .AsNoTracking()
             .Select(a => new AttractionDto
@@ -86,7 +127,8 @@ public class AttractionDbRepos
                 },
                 Categories = a.CategoryDbM
                     .Select(c => c.CategoryType.ToString())
-                    .ToList()
+                    .ToList(),
+                Comments = a.CommentDbM.Select(c => c.CommentText).ToList()
             })
             .FirstOrDefaultAsync(a => a.AttractionId == id);
 

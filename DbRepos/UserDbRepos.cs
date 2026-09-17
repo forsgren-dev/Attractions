@@ -18,7 +18,7 @@ public class UserDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<IUser>> ListAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
+    public async Task<ResponsePageDto<IUser>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);

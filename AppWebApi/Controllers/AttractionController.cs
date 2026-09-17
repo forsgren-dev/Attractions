@@ -27,11 +27,25 @@ namespace AppWebApi.Controllers
         [ActionName("ListAllAttractions")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> ListAll(int pageNumber = 0, int pageSize = 10)
+        public async Task<IActionResult> ListAll(
+            int pageNumber = 0,
+            int pageSize = 10,
+            string attractionName = null,
+            string category = null,
+            string description = null,
+            string city = null,
+            string country = null)
         {
             try
             {
-                var result = await _service.ListAttractionsAsync(pageSize, pageNumber);
+                var result = await _service.ListAttractionsAsync(
+                    pageSize,
+                    pageNumber,
+                    attractionName,
+                    category,
+                    description,
+                    city,
+                    country);
 
                 _logger.LogInformation($"{nameof(ListAll)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
