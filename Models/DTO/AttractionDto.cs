@@ -12,10 +12,9 @@ public class AttractionDto
     public  AttractionAddressDto Address { get; set; }
     public List<string> Categories { get; set; } = new();
 
-    //Hittade denna metod för att dölja "comments": [] i json-svaret när kommentarer inte ska visas
+    //Hittade denna metod för att dölja sjävla '"comments": []' i json-svaret när kommentarer inte ska visas
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<CommentDto> Comments { get; set; }
-
 
 
 }
