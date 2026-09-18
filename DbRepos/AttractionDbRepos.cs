@@ -19,7 +19,7 @@ public class AttractionDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-   // var query = _dbContext.Attractions
+    // var query = _dbContext.Attractions
     // .AsNoTracking()
     // .Include(a => a.AddressDbM)
     // .ThenInclude(ad => ad.CityDbM)
@@ -110,7 +110,7 @@ public class AttractionDbRepos
 
     public async Task<ResponseItemDto<AttractionDto>> ReadItemAsync(Guid id)
     {
-        
+
         var item = await _dbContext.Attractions
             .AsNoTracking()
             .Select(a => new AttractionDto
@@ -126,19 +126,27 @@ public class AttractionDbRepos
                     Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
                 },
                 Categories = a.CategoryDbM
-                    .Select(c => c.CategoryType.ToString())
+                    .Select(c => c.CategoryName)
                     .ToList(),
-                Comments = a.CommentDbM.Select(c => c.CommentText).ToList()
+                Comments = a.CommentDbM
+                    .Select(c => new CommentDto
+                    {
+                        CommentId = c.CommentId,
+                        CommentText = c.CommentText,
+                        UserName = c.UserName,
+                    })
+                    .ToList()
+
             })
             .FirstOrDefaultAsync(a => a.AttractionId == id);
 
         return new ResponseItemDto<AttractionDto>
         {
 #if DEBUG
-            ConnectionString = _dbContext.dbConnection,
+        ConnectionString = _dbContext.dbConnection,
 #endif
             Item = item
-        };
+    };
     }
 
     public async Task SeedAsync(int nrItems)

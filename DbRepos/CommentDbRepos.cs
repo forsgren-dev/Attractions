@@ -122,10 +122,10 @@ public class CommentDbRepos
 
         foreach (var attraction in attractions)
         {
-            var maxCommentsToAdd = Math.Max(0, 20 - attraction.CommentDbM.Count);
-            var commentsToAdd = seeder.Next(0, maxCommentsToAdd + 1);
+            var maxCommentsAdd = Math.Max(0, 20 - attraction.CommentDbM.Count);
+            var commentsAdd = seeder.Next(0, maxCommentsAdd + 1);
 
-            for (int i = 0; i < commentsToAdd; i++)
+            for (int i = 0; i < commentsAdd; i++)
             {
                 var comment = new CommentDbM().Seed(seeder);
                 comment.AttractionDbM = attraction;
