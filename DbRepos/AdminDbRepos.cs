@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 using DbContext;
 using Configuration;
+using Models.DTO;
 
 namespace DbRepos;
 
@@ -28,6 +29,23 @@ public class AdminDbRepos
 
         _dbContext.Attractions.RemoveRange(seededAttractions);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<ResponseItemDto<DbInfoDto>> GuestInfoAsync() => await DbInfo();
+
+
+    private async Task<ResponseItemDto<DbInfoDto>> DbInfo()
+    {
+        var info = await _dbContext.DbInfoView.FirstAsync();
+
+        return new ResponseItemDto<DbInfoDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+
+            Item = info
+        };
     }
 
     public AdminDbRepos(

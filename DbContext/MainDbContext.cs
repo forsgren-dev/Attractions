@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-
+using Models.DTO;
 using Configuration;
 using DbModels;
 using Microsoft.Extensions.Hosting.Internal;
@@ -32,6 +32,7 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<CategoryDbM> Categories { get; set; }
     public DbSet<CommentDbM> Comments { get; set; }
     public DbSet<UserDbM> Users { get; set; }
+    public DbSet<DbInfoDto> DbInfoView { get; set; }
     #endregion
 
     #region constructors
@@ -45,6 +46,12 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
     //Here we can modify the migration building
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        #region model the Views
+        modelBuilder.Entity<DbInfoDto>().ToView("vwDbInfo", "gstusr").HasNoKey();
+
+        #endregion
+
         #region override modelbuilder
 
         modelBuilder.Entity<UserDbM>()

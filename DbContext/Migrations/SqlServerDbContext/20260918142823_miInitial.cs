@@ -173,7 +173,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                         column: x => x.UserDbMUserId,
                         principalSchema: "supusr",
                         principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

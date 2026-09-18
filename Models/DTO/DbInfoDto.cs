@@ -9,8 +9,7 @@ namespace Models.DTO
     {
         public int NrSeededUsers { get; set; } = 0;
         public int NrUnseededUsers { get; set; } = 0;
-        public int NrSeededCities { get; set; } = 0;
-        public int NrUnseededCities { get; set; } = 0;
+        public int NrCities { get; set; } = 0;
         public int NrSeededAttractions { get; set; } = 0;
         public int NrUnseededAttractions { get; set; } = 0;
     }

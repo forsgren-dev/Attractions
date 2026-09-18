@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260917082808_miInitial")]
+    [Migration("20260918142823_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -188,6 +188,31 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.ToTable("Users", "supusr");
                 });
 
+            modelBuilder.Entity("Models.DTO.DbInfoDto", b =>
+                {
+                    b.Property<int>("NrSeededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededCities")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededUsers")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededCities")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededUsers")
+                        .HasColumnType("int");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("vwDbInfo", "gstusr");
+                });
+
             modelBuilder.Entity("AttractionDbMCategoryDbM", b =>
                 {
                     b.HasOne("DbModels.AttractionDbM", null)
@@ -242,7 +267,8 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasOne("DbModels.UserDbM", "UserDbM")
                         .WithMany("CommentDbM")
-                        .HasForeignKey("UserDbMUserId");
+                        .HasForeignKey("UserDbMUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("AttractionDbM");
 

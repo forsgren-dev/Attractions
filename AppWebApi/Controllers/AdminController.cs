@@ -69,7 +69,7 @@ namespace AppWebApi.Controllers
         [ActionName("SeedDatabase")]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> Seed(int nrItems = 10)
+        public async Task<IActionResult> Seed(int nrItems = 1000)
         {
             try
             {
