@@ -112,6 +112,8 @@ public class AttractionDbRepos
     {
 
         var item = await _dbContext.Attractions
+        .Include(a => a.CommentDbM)
+        .ThenInclude(c => c.UserDbM)
             .AsNoTracking()
             .Select(a => new AttractionDto
             {
@@ -133,7 +135,8 @@ public class AttractionDbRepos
                     {
                         CommentId = c.CommentId,
                         CommentText = c.CommentText,
-                        UserName = c.UserName,
+                        UserId = c.UserDbM.UserId,
+                        UserName = c.UserDbM.UserName
                     })
                     .ToList()
 
@@ -154,12 +157,15 @@ public class AttractionDbRepos
         const int batchSize = 500;
         var fn = Path.GetFullPath(_seedSource);
         var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
+
         var countries = new HashSet<CountryDbM>(
             await _dbContext.Countries.ToListAsync());
+
         var cities = new HashSet<CityDbM>(
             await _dbContext.Cities
                 .Include(c => c.CountryDbM)
                 .ToListAsync());
+                
         var categories = new HashSet<CategoryDbM>(
             await _dbContext.Categories.ToListAsync());
 

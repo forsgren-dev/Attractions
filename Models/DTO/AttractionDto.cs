@@ -14,7 +14,7 @@ public class AttractionDto
 
     //Hittade denna metod för att dölja "comments": [] i json-svaret när kommentarer inte ska visas
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public List<string> Comments { get; set; }
+    public List<CommentDto> Comments { get; set; }
 
 
 
