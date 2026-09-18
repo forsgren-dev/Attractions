@@ -66,15 +66,29 @@ public class UserDbRepos
         }
     }
 
-    public async Task<ResponseItemDto<IUser>> ReadUserAsync(Guid id)
+    public async Task<ResponseItemDto<UserExtendDto>> ReadUserAsync(Guid id)
     {
         var item = await _dbContext.Users
-        .AsNoTracking()
-        .Where(a => a.UserId == id)
-        .FirstOrDefaultAsync<IUser>();
+            .AsNoTracking()
+            .Where(u => u.UserId == id)
+            .Select(u => new UserExtendDto
+            {
+                UserId = u.UserId,
+                UserName = u.UserName,
+                Comments = u.CommentDbM
+                    .Select(c => new UserCommentsDto
+                    {
+                        CommentId = c.CommentId,
+                        CommentText = c.CommentText,
+                        AttractionId = c.AttractionDbM.AttractionId,
+                        AttractionName = c.AttractionDbM.AttractionName
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
 
 
-        return new ResponseItemDto<IUser>
+        return new ResponseItemDto<UserExtendDto>
         {
 #if DEBUG
             ConnectionString = _dbContext.dbConnection,

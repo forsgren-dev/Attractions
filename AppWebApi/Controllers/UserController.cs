@@ -46,7 +46,7 @@ namespace AppWebApi.Controllers
 
         [HttpGet()]
         [ActionName("ReadItem")]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<IUser>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserExtendDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
         public async Task<IActionResult> ReadItem(Guid id)
