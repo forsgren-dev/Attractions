@@ -51,6 +51,11 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
             .HasIndex(u => u.UserName)
             .IsUnique();
 
+        modelBuilder.Entity<CommentDbM>()
+            .HasOne(c => c.UserDbM)
+            .WithMany(u => u.CommentDbM)
+            .OnDelete(DeleteBehavior.Cascade);
+
         #endregion
 
         base.OnModelCreating(modelBuilder);
