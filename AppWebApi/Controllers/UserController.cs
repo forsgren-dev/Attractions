@@ -25,7 +25,7 @@ namespace AppWebApi.Controllers
 
         [HttpGet]
         [ActionName("ListUsers")]
-        [ProducesResponseType(typeof(ResponsePageDto<IUser>), 200)]
+        [ProducesResponseType(typeof(ResponsePageDto<UserDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0, bool flat = false)
         {
@@ -46,7 +46,7 @@ namespace AppWebApi.Controllers
 
         [HttpGet()]
         [ActionName("ReadItem")]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserExtendDto>))]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
         public async Task<IActionResult> ReadItem(Guid id)

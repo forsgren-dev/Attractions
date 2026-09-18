@@ -18,21 +18,36 @@ public class UserDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<IUser>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
+    public async Task<ResponsePageDto<UserDto>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
 
         var totalCount = await _dbContext.Users.CountAsync();
 
-        var users = await _dbContext.Users.AsNoTracking()
-            .Skip(pageNumber * pageSize)
-            .Take(pageSize)
-            .ToListAsync<IUser>();
-
-        if (flat)
+        if (!flat)
         {
-            return new ResponsePageDto<IUser>
+            var users = await _dbContext.Users
+                .AsNoTracking()
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .Select(u => new UserDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.UserName,
+                    Comments = u.CommentDbM
+                        .Select(c => new UserCommentsDto
+                        {
+                            CommentId = c.CommentId,
+                            CommentText = c.CommentText,
+                            AttractionId = c.AttractionDbM.AttractionId,
+                            AttractionName = c.AttractionDbM.AttractionName
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return new ResponsePageDto<UserDto>
             {
 #if DEBUG
                 ConnectionString = _dbContext.dbConnection,
@@ -41,18 +56,23 @@ public class UserDbRepos
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                 DbItemsCount = totalCount,
-
-                Items = users.Select(u => new UserFlatDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.UserName
-                }).ToList<IUser>()
+                Items = users
             };
         }
         else
         {
+            var users = await _dbContext.Users
+                .AsNoTracking()
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .Select(u => new UserDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.UserName
+                })
+                .ToListAsync();
 
-            return new ResponsePageDto<IUser>
+            return new ResponsePageDto<UserDto>
             {
 #if DEBUG
                 ConnectionString = _dbContext.dbConnection,
@@ -66,12 +86,12 @@ public class UserDbRepos
         }
     }
 
-    public async Task<ResponseItemDto<UserExtendDto>> ReadUserAsync(Guid id)
+    public async Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id)
     {
         var item = await _dbContext.Users
             .AsNoTracking()
             .Where(u => u.UserId == id)
-            .Select(u => new UserExtendDto
+            .Select(u => new UserDto
             {
                 UserId = u.UserId,
                 UserName = u.UserName,
@@ -88,7 +108,7 @@ public class UserDbRepos
             .FirstOrDefaultAsync();
 
 
-        return new ResponseItemDto<UserExtendDto>
+        return new ResponseItemDto<UserDto>
         {
 #if DEBUG
             ConnectionString = _dbContext.dbConnection,
