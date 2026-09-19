@@ -54,10 +54,6 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
 
         #region override modelbuilder
 
-        modelBuilder.Entity<UserDbM>()
-            .HasIndex(u => u.UserName)
-            .IsUnique();
-
         modelBuilder.Entity<CommentDbM>()
             .HasOne(c => c.UserDbM)
             .WithMany(u => u.CommentDbM)

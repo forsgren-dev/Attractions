@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbModels;
 
+[Index(nameof(Seeded))]
 [Table("Comments", Schema = "supusr")]
 public class CommentDbM : Comment, ISeed<CommentDbM>
 {

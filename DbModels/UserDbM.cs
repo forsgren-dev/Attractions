@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 using Seido.Utilities.SeedGenerator;
 using Models;
 
 namespace DbModels;
 
+[Index(nameof(UserName), IsUnique = true)]
+[Index(nameof(Seeded))]
 [Table("Users", Schema = "supusr")]
 public class UserDbM : User, ISeed<UserDbM>
 {

@@ -184,6 +184,12 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CityDbMCityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Addresses_Seeded",
+                schema: "supusr",
+                table: "Addresses",
+                column: "Seeded");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AttractionDbMCategoryDbM_CategoryDbMCategoryId",
                 schema: "supusr",
                 table: "AttractionDbMCategoryDbM",
@@ -194,6 +200,31 @@ namespace DbContext.Migrations.SqlServerDbContext
                 schema: "supusr",
                 table: "Attractions",
                 column: "AddressDbMAddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attractions_AttractionName",
+                schema: "supusr",
+                table: "Attractions",
+                column: "AttractionName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attractions_Seeded",
+                schema: "supusr",
+                table: "Attractions",
+                column: "Seeded");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryType",
+                schema: "supusr",
+                table: "Categories",
+                column: "CategoryType",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cities_CityName",
+                schema: "supusr",
+                table: "Cities",
+                column: "CityName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_CountryDbMCountryId",
@@ -208,10 +239,30 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "AttractionDbMAttractionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_Seeded",
+                schema: "supusr",
+                table: "Comments",
+                column: "Seeded");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserDbMUserId",
                 schema: "supusr",
                 table: "Comments",
                 column: "UserDbMUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Countries_CountryName",
+                schema: "supusr",
+                table: "Countries",
+                column: "CountryName",
+                unique: true,
+                filter: "[CountryName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Seeded",
+                schema: "supusr",
+                table: "Users",
+                column: "Seeded");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserName",

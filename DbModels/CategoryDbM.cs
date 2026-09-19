@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 using Seido.Utilities.SeedGenerator;
 using Models;
 
 namespace DbModels;
 
+[Index(nameof(CategoryType), IsUnique = true)]
 [Table("Categories", Schema = "supusr")]
 public class CategoryDbM : Category, IEquatable<CategoryDbM>
 {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260918142823_miInitial")]
+    [Migration("20260919095239_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -62,6 +62,8 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasIndex("CityDbMCityId");
 
+                    b.HasIndex("Seeded");
+
                     b.ToTable("Addresses", "supusr");
                 });
 
@@ -87,6 +89,10 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasIndex("AddressDbMAddressId");
 
+                    b.HasIndex("AttractionName");
+
+                    b.HasIndex("Seeded");
+
                     b.ToTable("Attractions", "supusr");
                 });
 
@@ -104,6 +110,9 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasKey("CategoryId");
 
+                    b.HasIndex("CategoryType")
+                        .IsUnique();
+
                     b.ToTable("Categories", "supusr");
                 });
 
@@ -120,6 +129,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CityId");
+
+                    b.HasIndex("CityName");
 
                     b.HasIndex("CountryDbMCountryId");
 
@@ -148,6 +159,8 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasIndex("AttractionDbMAttractionId");
 
+                    b.HasIndex("Seeded");
+
                     b.HasIndex("UserDbMUserId");
 
                     b.ToTable("Comments", "supusr");
@@ -163,6 +176,10 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("varchar(200)");
 
                     b.HasKey("CountryId");
+
+                    b.HasIndex("CountryName")
+                        .IsUnique()
+                        .HasFilter("[CountryName] IS NOT NULL");
 
                     b.ToTable("Countries", "supusr");
                 });
@@ -181,6 +198,8 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("Seeded");
+
                     b.HasIndex("UserName")
                         .IsUnique()
                         .HasFilter("[UserName] IS NOT NULL");
@@ -190,19 +209,16 @@ namespace DbContext.Migrations.SqlServerDbContext
 
             modelBuilder.Entity("Models.DTO.DbInfoDto", b =>
                 {
-                    b.Property<int>("NrSeededAttractions")
+                    b.Property<int>("NrCities")
                         .HasColumnType("int");
 
-                    b.Property<int>("NrSeededCities")
+                    b.Property<int>("NrSeededAttractions")
                         .HasColumnType("int");
 
                     b.Property<int>("NrSeededUsers")
                         .HasColumnType("int");
 
                     b.Property<int>("NrUnseededAttractions")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NrUnseededCities")
                         .HasColumnType("int");
 
                     b.Property<int>("NrUnseededUsers")

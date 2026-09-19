@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 using Seido.Utilities.SeedGenerator;
 using Models;
 
 namespace DbModels;
 
+[Index(nameof(CountryName), IsUnique = true)]
 [Table("Countries", Schema = "supusr")]
 public class CountryDbM : Country, IEquatable<CountryDbM>
 {
