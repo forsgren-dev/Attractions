@@ -12,7 +12,8 @@ public interface IAttractionService
         string category = null,
         string description = null,
         string city = null,
-        string country = null);
+        string country = null,
+        bool showComments = false);
     public Task<ResponsePageDto<AttractionDto>> ReadAttractionsNoCommentsAsync(
         int pageSize = 10,
         int pageNumber = 0,

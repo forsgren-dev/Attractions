@@ -34,7 +34,8 @@ namespace AppWebApi.Controllers
             string category = null,
             string description = null,
             string city = null,
-            string country = null)
+            string country = null,
+            bool showComments = false)
         {
             try
             {
@@ -45,7 +46,8 @@ namespace AppWebApi.Controllers
                     category,
                     description,
                     city,
-                    country);
+                    country,
+                    showComments);
 
                 _logger.LogInformation($"{nameof(ReadAttractions)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

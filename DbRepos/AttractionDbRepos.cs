@@ -19,11 +19,6 @@ public class AttractionDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    // var query = _dbContext.Attractions
-    // .AsNoTracking()
-    // .Include(a => a.AddressDbM)
-    // .ThenInclude(ad => ad.CityDbM)
-    // .ThenInclude(c => c.CountryDbM);
 
     // För listning så använder jag mina DTO:s för att undvika att skicka med onödig data och för att kunna forma datan. 
     // Jag använder LINQ för att projicera data från databasen till mina DTO-objekt.
@@ -34,7 +29,8 @@ public class AttractionDbRepos
         string category = null,
         string description = null,
         string city = null,
-        string country = null)
+        string country = null,
+        bool showComments = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -91,7 +87,15 @@ public class AttractionDbRepos
                 },
                 Categories = a.CategoryDbM
                     .Select(c => c.CategoryType.ToString())
-                    .ToList()
+                    .ToList(),
+                Comments = !showComments ? null : a.CommentDbM.Select(c => new CommentDto
+                        {
+                            CommentId = c.CommentId,
+                            CommentText = c.CommentText,
+                            UserId = c.UserDbM.UserId,
+                            UserName = c.UserDbM.UserName
+                        })
+                        .ToList()
             })
             .ToListAsync();
 
