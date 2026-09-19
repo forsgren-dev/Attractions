@@ -117,6 +117,47 @@ public class UserDbRepos
         };
     }
 
+    public async Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto itemDto)
+    {
+        if (await _dbContext.Users.AnyAsync(u => u.UserName == itemDto.UserName))
+        {
+            throw new ArgumentException($"UserName {itemDto.UserName} already exists.");
+        }
+
+        var item = new UserDbM(itemDto);
+
+        _dbContext.Users.Add(item);
+        await _dbContext.SaveChangesAsync();
+
+        return await ReadUserAsync(item.UserId);
+    }
+
+    private async Task navProp_UserUpdateDto_to_UserDbM(UserUpdateDto itemDtoSrc, UserDbM itemDst)
+    {
+        List<CommentDbM> comments = null;
+        if (itemDtoSrc.CommentsId != null)
+        {
+            comments = new List<CommentDbM>();
+            foreach (var id in itemDtoSrc.CommentsId)
+            {
+                if (id is null)
+                {
+                    throw new ArgumentException($"{nameof(itemDtoSrc.CommentsId)} cannot contain null ids.");
+                }
+
+                var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.CommentId == id);
+                if (comment == null)
+                {
+                    throw new ArgumentException($"Item id {id} not existing.");
+                }
+
+                comments.Add(comment);
+            }
+        }
+
+        itemDst.CommentDbM = comments;
+    }
+
 
     public async Task SeedAsync(int nrItems)
     {

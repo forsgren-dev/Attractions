@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Seido.Utilities.SeedGenerator;
 using Models;
+using Models.DTO;
 
 namespace DbModels;
 
@@ -25,6 +26,15 @@ public class UserDbM : User, ISeed<UserDbM>
     }
 
     public List<CommentDbM> CommentDbM { get; set; } = new();
+
+    public UserDbM() { }
+
+    public UserDbM(UserCreateDto itemDto)
+    {
+        UserId = Guid.NewGuid();
+        UserName = itemDto.UserName;
+        Seeded = false;
+    }
 
     public override UserDbM Seed(SeedGenerator seeder)
     {

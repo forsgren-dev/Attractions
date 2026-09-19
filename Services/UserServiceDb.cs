@@ -15,6 +15,7 @@ public class UserServiceDb : IUserService
       public Task<ResponsePageDto<UserDto>> ListUsersAsync(int pageSize, int pageNumber, bool flat) => _repo.ReadAllAsync(pageSize, pageNumber, flat);
 
     public Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id) => _repo.ReadUserAsync(id);
+    public Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto item) => _repo.CreateUserAsync(item);
 
     #region constructors
     public UserServiceDb(

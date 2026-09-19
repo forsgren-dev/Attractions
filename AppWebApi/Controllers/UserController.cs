@@ -68,6 +68,29 @@ namespace AppWebApi.Controllers
             }
         }
 
+        [HttpPost()]
+        [ActionName("CreateItem")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> CreateItem([FromBody] UserCreateDto item)
+        {
+            try
+            {
+                item.EnsureValidity();
+                _logger.LogInformation($"{nameof(CreateItem)}:");
+
+                var resp = await _service.CreateUserAsync(item);
+                _logger.LogInformation($"item {resp.Item.UserId} created");
+
+                return Ok(resp);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(CreateItem)}: {ex.Message}");
+                return BadRequest($"Could not create. Error {ex.Message}");
+            }
+        }
+
         public UserController(
                    ILogger<UserController> logger,
                    IUserService service)
