@@ -9,32 +9,37 @@ GO
 CREATE OR ALTER VIEW gstusr.vwDbInfo AS
     SELECT (SELECT COUNT(*) FROM supusr.Users WHERE Seeded = 1) as nrSeededUsers, 
         (SELECT COUNT(*) FROM supusr.Users WHERE Seeded = 0) as nrUnseededUsers,
-        (SELECT COUNT(*) FROM supusr.Cities) as nrCities,
         (SELECT COUNT(*) FROM supusr.Attractions WHERE Seeded = 1) as nrSeededAttractions, 
-        (SELECT COUNT(*) FROM supusr.Attractions WHERE Seeded = 0) as nrUnseededAttractions;
+        (SELECT COUNT(*) FROM supusr.Attractions WHERE Seeded = 0) as nrUnseededAttractions,
+        (SELECT COUNT(*) FROM supusr.Addresses WHERE Seeded = 1) as nrSeededAddresses,
+        (SELECT COUNT(*) FROM supusr.Addresses WHERE Seeded = 0) as nrUnseededAddresses,
+        (SELECT COUNT(*) FROM supusr.Comments WHERE Seeded = 1) as nrSeededComments,
+        (SELECT COUNT(*) FROM supusr.Comments WHERE Seeded = 0) as nrUnseededComments,
+        (SELECT COUNT(*) FROM supusr.Cities) as nrCities,
+        (SELECT COUNT(*) FROM supusr.Countries) as nrCountries;
 GO
 
 CREATE OR ALTER PROC supusr.spDeleteAll
     @seededParam BIT = 1,
 
-    @nrFriendsAffected INT OUTPUT,
+    @nrAttractionsAffected INT OUTPUT,
     @nrAddressesAffected INT OUTPUT,
-    @nrPetsAffected INT OUTPUT,
-    @nrQuotesAffected INT OUTPUT
+    @nrUsersAffected INT OUTPUT,
+    @nrCommentsAffected INT OUTPUT
     
     AS
 
     SET NOCOUNT ON;
 
-    SELECT  @nrFriendsAffected = COUNT(*) FROM supusr.Friends WHERE Seeded = @seededParam;
+    SELECT  @nrAttractionsAffected = COUNT(*) FROM supusr.Attractions WHERE Seeded = @seededParam;
     SELECT  @nrAddressesAffected = COUNT(*) FROM supusr.Addresses WHERE Seeded = @seededParam;
-    SELECT  @nrPetsAffected = COUNT(*) FROM supusr.Pets WHERE Seeded = @seededParam;
-    SELECT  @nrQuotesAffected = COUNT(*) FROM supusr.Quotes WHERE Seeded = @seededParam;
+    SELECT  @nrUsersAffected = COUNT(*) FROM supusr.Users WHERE Seeded = @seededParam;
+    SELECT  @nrCommentsAffected = COUNT(*) FROM supusr.Comments WHERE Seeded = @seededParam;
 
-    DELETE FROM supusr.Friends WHERE Seeded = @seededParam;
+    DELETE FROM supusr.Comments WHERE Seeded = @seededParam;
+    DELETE FROM supusr.Attractions WHERE Seeded = @seededParam;
     DELETE FROM supusr.Addresses WHERE Seeded = @seededParam;
-    DELETE FROM supusr.Pets WHERE Seeded = @seededParam;
-    DELETE FROM supusr.Quotes WHERE Seeded = @seededParam;
+    DELETE FROM supusr.Users WHERE Seeded = @seededParam;
 
     --throw our own error
     --;THROW 999999, 'Error occurred in supusr.spDeleteAll', 1

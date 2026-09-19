@@ -13,7 +13,7 @@ public class AdminServiceDb : IAdminService
     public Task<ResponseItemDto<DbInfoDto>> GuestInfoAsync() => _repo.GuestInfoAsync();
 
     public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
-    public Task RemoveSeededAsync() => _repo.RemoveSeededAsync();
+    public Task<ResponseItemDto<DbInfoDto>> RemoveSeededAsync() => _repo.RemoveSeededAsync();
 
     #region constructors
     public AdminServiceDb(AdminDbRepos repo)

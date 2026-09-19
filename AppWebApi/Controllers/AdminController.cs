@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Services;
 using Configuration;
 using Configuration.Options;
+using Models.DTO;
 using Microsoft.Extensions.Options;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -87,16 +88,16 @@ namespace AppWebApi.Controllers
 
         [HttpDelete]
         [ActionName("RemoveSeededData")]
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ResponseItemDto<DbInfoDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> RemoveSeededData()
         {
             try
             {
-                await _service.RemoveSeededAsync();
+                var result = await _service.RemoveSeededAsync();
 
                 _logger.LogInformation($"{nameof(RemoveSeededData)} succeeded.");
-                return Ok("Seeded data removed successfully");
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -105,26 +106,6 @@ namespace AppWebApi.Controllers
             }
         }
 
-        //GET: api/admin/seed?count={count}
-        // [HttpGet()]
-        // [ActionName("Seed")]
-        // [ProducesResponseType(200, Type = typeof(string))]
-        // [ProducesResponseType(400, Type = typeof(string))]
-    //    public async Task<IActionResult> Seed(int nrItems = 10)
-    //     {
-    //         try
-    //         {
-    //             _logger.LogInformation($"{nameof(Seed)}");
-    //             await _service.SeedAsync(nrItems);
-
-    //             return Ok($"Seeded {nrItems} items successfully");
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             _logger.LogError($"{nameof(Seed)}: {ex.Message}");
-    //             return BadRequest(ex.Message);
-    //         }
-    //     }
 
         //GET: api/admin/log
         [HttpGet()]
