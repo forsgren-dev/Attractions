@@ -11,7 +11,7 @@ public class AttractionServiceDb : IAttractionService
     private readonly ILogger<AttractionServiceDb> _logger = null;
 
     public Task SeedAsync(int nrItems) => _repo.SeedAsync(nrItems);
-    public Task<ResponsePageDto<AttractionDto>> ListAttractionsAsync(
+    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsAsync(
         int pageSize,
         int pageNumber,
         string attractionName = null,
@@ -20,8 +20,15 @@ public class AttractionServiceDb : IAttractionService
         string city = null,
         string country = null) =>
         _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country);
+        
+    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsNoCommentsAsync(
+        int pageSize,
+        int pageNumber,
+        string city = null,
+        string country = null) =>
+        _repo.ReadAttractionsNoCommentsAsync(pageSize, pageNumber, city, country);
 
-    public Task<ResponseItemDto<AttractionDto>> ReadAttractionAsync(Guid id) => _repo.ReadItemAsync(id);
+    public Task<ResponseItemDto<AttractionDto>> ReadSingleAttractionAsync(Guid id) => _repo.ReadItemAsync(id);
 
    
     #region constructors

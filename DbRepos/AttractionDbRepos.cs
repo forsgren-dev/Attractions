@@ -108,6 +108,68 @@ public class AttractionDbRepos
         };
     }
 
+    public async Task<ResponsePageDto<AttractionDto>> ReadAttractionsNoCommentsAsync(
+        int pageSize,
+        int pageNumber,
+        string city = null,
+        string country = null)
+    {
+        pageSize = Math.Max(1, pageSize);
+        pageNumber = Math.Max(0, pageNumber);
+
+        city = city?.Trim().ToLower();
+        country = country?.Trim().ToLower();
+
+        var query = _dbContext.Attractions.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(city))
+        {
+            query = query.Where(a => a.AddressDbM.CityDbM.CityName.ToLower().Contains(city));
+        }
+
+        if (!string.IsNullOrEmpty(country))
+        {
+            query = query.Where(a => a.AddressDbM.CityDbM.CountryDbM.CountryName.ToLower().Contains(country));
+        }
+
+        query = query.Where(a => !a.CommentDbM.Any());
+
+        var totalCount = await query.CountAsync();
+
+        var attractions = await query
+            .Skip(pageNumber * pageSize)
+            .Take(pageSize)
+            .Select(a => new AttractionDto
+            {
+                AttractionId = a.AttractionId,
+                AttractionName = a.AttractionName,
+                AttractionDescription = a.AttractionDescription,
+                Address = new AttractionAddressDto
+                {
+                    Street = a.AddressDbM.Street,
+                    PostalCode = a.AddressDbM.PostalCode,
+                    City = a.AddressDbM.CityDbM.CityName,
+                    Country = a.AddressDbM.CityDbM.CountryDbM.CountryName
+                },
+                Categories = a.CategoryDbM
+                    .Select(c => c.CategoryType.ToString())
+                    .ToList()
+            })
+            .ToListAsync();
+
+        return new ResponsePageDto<AttractionDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            DbItemsCount = totalCount,
+            Items = attractions
+        };
+    }
+
     public async Task<ResponseItemDto<AttractionDto>> ReadItemAsync(Guid id)
     {
 

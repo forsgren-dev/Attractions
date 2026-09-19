@@ -22,12 +22,12 @@ namespace AppWebApi.Controllers
 
         readonly IAttractionService _service;
 
-        //GET: api/attraction/list
+        //GET: api/attraction/readallattractions
         [HttpGet]
-        [ActionName("ListAllAttractions")]
+        [ActionName("ReadAttractions")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> ListAll(
+        public async Task<IActionResult> ReadAttractions(
             int pageNumber = 0,
             int pageSize = 10,
             string attractionName = null,
@@ -38,7 +38,7 @@ namespace AppWebApi.Controllers
         {
             try
             {
-                var result = await _service.ListAttractionsAsync(
+                var result = await _service.ReadAttractionsAsync(
                     pageSize,
                     pageNumber,
                     attractionName,
@@ -47,12 +47,40 @@ namespace AppWebApi.Controllers
                     city,
                     country);
 
-                _logger.LogInformation($"{nameof(ListAll)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                _logger.LogInformation($"{nameof(ReadAttractions)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ListAll)} failed: {ex.Message}");
+                _logger.LogError($"{nameof(ReadAttractions)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+          [HttpGet]
+        [ActionName("ReadAttractionsNoComments")]
+        [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> ReadAttractionsNoComments(
+            int pageNumber = 0,
+            int pageSize = 10,
+            string city = null,
+            string country = null)
+        {
+            try
+            {
+                var result = await _service.ReadAttractionsNoCommentsAsync(
+                    pageSize,
+                    pageNumber,
+                    city,
+                    country);
+
+                _logger.LogInformation($"{nameof(ReadAttractionsNoComments)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(ReadAttractionsNoComments)} failed: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
@@ -68,7 +96,7 @@ namespace AppWebApi.Controllers
             try
             {
                 _logger.LogInformation($"{nameof(ReadItem)}: {id}");
-                var resp = await _service.ReadAttractionAsync(id);
+                var resp = await _service.ReadSingleAttractionAsync(id);
 
                 if (resp.Item is null)
                     return NotFound($"No attraction found with id {id}");
