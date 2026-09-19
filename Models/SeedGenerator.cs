@@ -558,22 +558,22 @@ namespace Seido.Utilities.SeedGenerator
                 {
                         new SeedAddress {
                             jsonCountry = "Sweden",
-                            jsonCities = "Stockholm, Göteborg, Malmö, Uppsala, Linköping, Örebro",
+                            jsonCities = "Stockholm, Göteborg, Malmö, Uppsala, Linköping, Örebro, Västerås, Helsingborg, Norrköping, Jönköping, Umeå, Lund, Borås, Sundsvall, Gävle, Eskilstuna, Södertälje, Karlstad, Täby, Växjö, Halmstad, Luleå, Östersund, Trollhättan, Kalmar, Falun, Skövde, Karlskrona",
                             jsonStreets = "Svedjevägen, Ringvägen, Vasagatan, Odenplan, Birger Jarlsgatan, Äppelviksvägen, Kvarnbacksvägen"
                         },
                         new SeedAddress {
                             jsonCountry = "Norway",
-                            jsonCities = "Oslo, Bergen, Trondheim, Stavanger, Dramen",
+                            jsonCities = "Oslo, Bergen, Trondheim, Stavanger, Drammen, Fredrikstad, Kristiansand, Sandnes, Tromsø, Sarpsborg, Skien, Ålesund, Sandefjord, Haugesund, Tønsberg, Moss, Bodø, Arendal, Hamar, Lillehammer, Halden, Larvik, Molde, Harstad, Kongsberg, Gjøvik, Narvik",
                             jsonStreets = "Bygdoy alle, Frognerveien, Pilestredet, Vidars gate, Sågveien, Toftes gate, Gardeveiend",
                     },
                         new SeedAddress {
                             jsonCountry = "Denmark",
-                            jsonCities = "Köpenhamn, Århus, Odense, Aahlborg, Esbjerg",
+                            jsonCities = "København, Aarhus, Odense, Aalborg, Esbjerg, Randers, Kolding, Horsens, Vejle, Roskilde, Herning, Hørsholm, Helsingør, Silkeborg, Næstved, Fredericia, Viborg, Køge, Holstebro, Taastrup, Slagelse, Hillerød, Sønderborg, Svendborg, Holbæk, Nykøbing Falster, Skive",
                             jsonStreets = "Rolighedsvej, Fensmarkgade, Svanevej, Gröndalsvej, Githersgade, Classensgade, Moltekesvej"
                     },
                         new SeedAddress {
                             jsonCountry = "Finland",
-                            jsonCities = "Helsingfors, Espoo, Tampere, Vaanta, Oulu",
+                            jsonCities = "Helsinki, Espoo, Tampere, Vantaa, Oulu, Turku, Jyväskylä, Lahti, Kuopio, Pori, Kouvola, Joensuu, Lappeenranta, Hämeenlinna, Vaasa, Seinäjoki, Rovaniemi, Mikkeli, Kotka, Salo, Porvoo, Kokkola, Hyvinkää, Lohja, Järvenpää, Nurmijärvi, Rauma, Kajaani",
                             jsonStreets = "Arkandiankatu, Liisankatu, Ruoholahdenkatu, Pohjoistranta, Eerikinkatu, Vauhtitie, Itainen Vaideki"
                     },
                 },
