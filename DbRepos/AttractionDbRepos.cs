@@ -232,7 +232,8 @@ public class AttractionDbRepos
             AddressId = Guid.NewGuid(),
             Street = seeder.StreetAddress(countryName),
             PostalCode = seeder.ZipCode.ToString(),
-            CityDbM = city
+            CityDbM = city,
+            Seeded = true
         };
     }
 
