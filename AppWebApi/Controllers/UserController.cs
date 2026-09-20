@@ -27,11 +27,15 @@ namespace AppWebApi.Controllers
         [ActionName("ReadUsers")]
         [ProducesResponseType(typeof(ResponsePageDto<UserDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> ReadUsers(int pageSize = 10, int pageNumber = 0, bool showComments = false)
+        public async Task<IActionResult> ReadUsers(
+            int pageSize = 10,
+            int pageNumber = 0,
+            string userName = null,
+            bool showComments = false)
         {
             try
             {
-                var result = await _service.ReadUsersAsync(pageSize, pageNumber, showComments);
+                var result = await _service.ReadUsersAsync(pageSize, pageNumber, userName, showComments);
 
                 _logger.LogInformation($"{nameof(ReadUsers)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

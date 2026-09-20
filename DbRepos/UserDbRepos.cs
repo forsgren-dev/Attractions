@@ -18,17 +18,29 @@ public class UserDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<UserDto>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool showComments = false)
+    public async Task<ResponsePageDto<UserDto>> ReadAllAsync(
+        int pageSize = 10,
+        int pageNumber = 0,
+        string userName = null,
+        bool showComments = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
 
-        var totalCount = await _dbContext.Users.CountAsync();
+        userName = userName?.Trim().ToLower();
+
+        var query = _dbContext.Users.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(userName))
+        {
+            query = query.Where(u => u.UserName.ToLower().Contains(userName));
+        }
+
+        var totalCount = await query.CountAsync();
 
         if (showComments)
         {
-            var users = await _dbContext.Users
-                .AsNoTracking()
+            var users = await query
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
                 .Select(u => new UserDto
@@ -62,8 +74,7 @@ public class UserDbRepos
         }
         else
         {
-            var users = await _dbContext.Users
-                .AsNoTracking()
+            var users = await query
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
                 .Select(u => new UserDto
