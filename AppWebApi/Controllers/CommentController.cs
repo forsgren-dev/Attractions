@@ -22,6 +22,29 @@ namespace AppWebApi.Controllers
 
         readonly ICommentService _service;
 
+        [HttpGet]
+        [ActionName("ReadComments")]
+        [ProducesResponseType(typeof(ResponsePageDto<CommentDto>), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<IActionResult> ReadComments(
+            int pageSize = 10,
+            int pageNumber = 0,
+            Guid? id = null)
+        {
+            try
+            {
+                var result = await _service.ReadCommentsAsync(pageSize, pageNumber, id);
+
+                _logger.LogInformation($"{nameof(ReadComments)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}, Id: {id}");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(ReadComments)} failed: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         [ActionName("CreateComment")]
         [ProducesResponseType(typeof(ResponseItemDto<CommentDto>), 200)]

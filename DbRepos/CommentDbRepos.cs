@@ -17,11 +17,27 @@ public class CommentDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponseItemDto<CommentDto>> ReadCommentAsync(Guid id)
+    public async Task<ResponsePageDto<CommentDto>> ReadCommentsAsync(
+        int pageSize = 10,
+        int pageNumber = 0,
+        Guid? id = null)
     {
-        var item = await _dbContext.Comments
-            .AsNoTracking()
-            .Where(c => c.CommentId == id)
+        pageSize = Math.Max(1, pageSize);
+        pageNumber = Math.Max(0, pageNumber);
+
+        var query = _dbContext.Comments.AsNoTracking();
+
+        if (id != null)
+        {
+            query = query.Where(c => c.CommentId == id);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var comments = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip(pageNumber * pageSize)
+            .Take(pageSize)
             .Select(c => new CommentDto
             {
                 CommentId = c.CommentId,
@@ -30,19 +46,18 @@ public class CommentDbRepos
                 UserId = c.UserDbM.UserId,
                 UserName = c.UserDbM.UserName
             })
-            .FirstOrDefaultAsync();
+            .ToListAsync();
 
-        if (item == null)
-        {
-            throw new ArgumentException($"Item {id} is not existing.");
-        }
-
-        return new ResponseItemDto<CommentDto>
+        return new ResponsePageDto<CommentDto>
         {
 #if DEBUG
             ConnectionString = _dbContext.dbConnection,
 #endif
-            Item = item
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            DbItemsCount = totalCount,
+            Items = comments
         };
     }
 
@@ -63,7 +78,14 @@ public class CommentDbRepos
 
         await _dbContext.SaveChangesAsync();
 
-        return await ReadCommentAsync(item.CommentId);
+        var created = await ReadCommentsAsync(1, 0, item.CommentId);
+        return new ResponseItemDto<CommentDto>
+        {
+#if DEBUG
+            ConnectionString = created.ConnectionString,
+#endif
+            Item = created.Items.FirstOrDefault()
+        };
     }
 
     private async Task navProp_CommentCreatDto_to_CommentDbM(CommentCreateDto itemDtoSrc, CommentDbM itemDst)
