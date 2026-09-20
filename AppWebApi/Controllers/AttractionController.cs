@@ -89,11 +89,11 @@ namespace AppWebApi.Controllers
 
 
         [HttpGet()]
-        [ActionName("ReadItem")]
+        [ActionName("ReadAttractionById")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
-        public async Task<IActionResult> ReadItem(
+        public async Task<IActionResult> ReadAttractionById(
             Guid id,
             int pageNumber = 0,
             int pageSize = 10,
@@ -101,7 +101,7 @@ namespace AppWebApi.Controllers
         {
             try
             {
-                _logger.LogInformation($"{nameof(ReadItem)}: {id}, PageSize: {pageSize}, PageNumber: {pageNumber}");
+                _logger.LogInformation($"{nameof(ReadAttractionById)}: {id}, PageSize: {pageSize}, PageNumber: {pageNumber}");
                 var resp = await _service.ReadSingleAttractionAsync(id, pageSize, pageNumber, showComments);
 
                 if (resp.Item is null)
@@ -111,7 +111,7 @@ namespace AppWebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ReadItem)}: {ex.Message}");
+                _logger.LogError($"{nameof(ReadAttractionById)}: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
