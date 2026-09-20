@@ -39,6 +39,9 @@ public class AttractionServiceDb : IAttractionService
     public Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto item) =>
         _repo.CreateAttractionAsync(item);
 
+    public Task<ResponseItemDto<AttractionDto>> UpdateAttractionAsync(AttractionUpdateDto item) =>
+        _repo.UpdateAttractionAsync(item);
+
    
     #region constructors
     public AttractionServiceDb(

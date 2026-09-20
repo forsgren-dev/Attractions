@@ -144,6 +144,34 @@ namespace AppWebApi.Controllers
             }
         }
 
+        [HttpPut()]
+        [ActionName("UpdateAttraction")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> UpdateAttraction([FromBody] AttractionUpdateDto item)
+        {
+            try
+            {
+                if (item == null)
+                {
+                    throw new ArgumentException($"{nameof(item)} cannot be null.");
+                }
+
+                item.EnsureValidity();
+                _logger.LogInformation($"{nameof(UpdateAttraction)}: {item.AttractionId}");
+
+                var resp = await _service.UpdateAttractionAsync(item);
+                _logger.LogInformation($"item {resp.Item.AttractionId} updated");
+
+                return Ok(resp);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(UpdateAttraction)}: {ex.Message}");
+                return BadRequest($"Could not update. Error {ex.Message}");
+            }
+        }
+
         //GET: api/attraction/seed?nrItems=10
 
         public AttractionController(

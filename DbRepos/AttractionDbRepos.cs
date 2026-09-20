@@ -252,40 +252,7 @@ public class AttractionDbRepos
 
     private async Task navProp_AttractionCreateDto_to_AttractionDbM(AttractionCreateDto itemDtoSrc, AttractionDbM itemDst)
     {
-        var countryName = EnsureCapitalLetter(itemDtoSrc.Country);
-        var cityName = EnsureCapitalLetter(itemDtoSrc.City);
-
-        var country = await _dbContext.Countries
-            .FirstOrDefaultAsync(c => c.CountryName.ToLower() == countryName.ToLower());
-
-        if (country == null)
-        {
-            country = new CountryDbM
-            {
-                CountryId = Guid.NewGuid(),
-                CountryName = countryName
-            };
-
-            _dbContext.Countries.Add(country);
-        }
-
-        var city = await _dbContext.Cities
-            .Include(c => c.CountryDbM)
-            .FirstOrDefaultAsync(c =>
-                c.CityName.ToLower() == cityName.ToLower()
-                && c.CountryDbM.CountryName.ToLower() == countryName.ToLower());
-
-        if (city == null)
-        {
-            city = new CityDbM
-            {
-                CityId = Guid.NewGuid(),
-                CityName = cityName,
-                CountryDbM = country
-            };
-
-            _dbContext.Cities.Add(city);
-        }
+        var city = await GetOrCreateCityAsync(itemDtoSrc.City, itemDtoSrc.Country);
 
         itemDst.AddressDbM = new AddressDbM
         {
@@ -296,20 +263,117 @@ public class AttractionDbRepos
             Seeded = false
         };
 
-        if (itemDtoSrc.CategoriesId == null)
+        itemDst.CategoryDbM = await GetCategoriesAsync(itemDtoSrc.CategoriesId);
+    }
+
+    public async Task<ResponseItemDto<AttractionDto>> UpdateAttractionAsync(AttractionUpdateDto itemDto)
+    {
+        if (itemDto == null)
         {
-            return;
+            throw new ArgumentException($"{nameof(itemDto)} cannot be null.");
+        }
+
+        itemDto.EnsureValidity();
+
+        var item = await _dbContext.Attractions
+            .Include(a => a.AddressDbM)
+            .ThenInclude(a => a.CityDbM)
+            .ThenInclude(c => c.CountryDbM)
+            .Include(a => a.CategoryDbM)
+            .FirstOrDefaultAsync(a => a.AttractionId == itemDto.AttractionId);
+
+        if (item == null)
+        {
+            throw new ArgumentException($"Item {itemDto.AttractionId} is not existing.");
+        }
+
+        item.AttractionName = EnsureCapitalLetter(itemDto.AttractionName);
+        item.AttractionDescription = EnsureCapitalLetter(itemDto.AttractionDescription);
+
+        await navProp_AttractionUpdateDto_to_AttractionDbM(itemDto, item);
+
+        _dbContext.Attractions.Update(item);
+
+        await _dbContext.SaveChangesAsync();
+
+        return await ReadItemAsync(item.AttractionId);
+    }
+
+    private async Task navProp_AttractionUpdateDto_to_AttractionDbM(AttractionUpdateDto itemDtoSrc, AttractionDbM itemDst)
+    {
+        var city = await GetOrCreateCityAsync(itemDtoSrc.City, itemDtoSrc.Country);
+
+        if (itemDst.AddressDbM == null)
+        {
+            itemDst.AddressDbM = new AddressDbM
+            {
+                AddressId = Guid.NewGuid(),
+                Seeded = false
+            };
+        }
+
+        itemDst.AddressDbM.Street = EnsureCapitalLetter(itemDtoSrc.Street);
+        itemDst.AddressDbM.PostalCode = itemDtoSrc.PostalCode?.Trim();
+        itemDst.AddressDbM.CityDbM = city;
+        itemDst.CategoryDbM = await GetCategoriesAsync(itemDtoSrc.CategoriesId);
+    }
+
+    private async Task<CityDbM> GetOrCreateCityAsync(string city, string country)
+    {
+        var countryName = EnsureCapitalLetter(country);
+        var cityName = EnsureCapitalLetter(city);
+
+        var countryItem = await _dbContext.Countries
+            .FirstOrDefaultAsync(c => c.CountryName.ToLower() == countryName.ToLower());
+
+        if (countryItem == null)
+        {
+            countryItem = new CountryDbM
+            {
+                CountryId = Guid.NewGuid(),
+                CountryName = countryName
+            };
+
+            _dbContext.Countries.Add(countryItem);
+        }
+
+        var cityItem = await _dbContext.Cities
+            .Include(c => c.CountryDbM)
+            .FirstOrDefaultAsync(c =>
+                c.CityName.ToLower() == cityName.ToLower()
+                && c.CountryDbM.CountryName.ToLower() == countryName.ToLower());
+
+        if (cityItem == null)
+        {
+            cityItem = new CityDbM
+            {
+                CityId = Guid.NewGuid(),
+                CityName = cityName,
+                CountryDbM = countryItem
+            };
+
+            _dbContext.Cities.Add(cityItem);
+        }
+
+        return cityItem;
+    }
+
+    private async Task<List<CategoryDbM>> GetCategoriesAsync(List<Guid?> categoryIds)
+    {
+        if (categoryIds == null)
+        {
+            return new List<CategoryDbM>();
         }
 
         var categories = new List<CategoryDbM>();
-        foreach (var id in itemDtoSrc.CategoriesId.Distinct())
+        foreach (var id in categoryIds.Distinct())
         {
-            if (id == Guid.Empty)
+            if (id is null || id == Guid.Empty)
             {
-                throw new ArgumentException($"{nameof(itemDtoSrc.CategoriesId)} cannot contain empty ids.");
+                throw new ArgumentException($"{nameof(categoryIds)} cannot contain empty ids.");
             }
 
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id.Value);
             if (category == null)
             {
                 throw new ArgumentException($"Category id {id} not existing.");
@@ -318,7 +382,7 @@ public class AttractionDbRepos
             categories.Add(category);
         }
 
-        itemDst.CategoryDbM = categories;
+        return categories;
     }
 
     private static string EnsureCapitalLetter(string value)

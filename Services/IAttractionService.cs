@@ -25,4 +25,5 @@ public interface IAttractionService
         int pageNumber = 0,
         bool showComments = false);
     public Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto item);
+    public Task<ResponseItemDto<AttractionDto>> UpdateAttractionAsync(AttractionUpdateDto item);
 }
