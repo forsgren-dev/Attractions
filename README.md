@@ -9,3 +9,5 @@ Run SQL-script:
 
 Start debugger.
 
+Seed database from the api/Admin/SeedDatabase endpoiont.
+
