@@ -120,7 +120,7 @@ namespace AppWebApi.Controllers
         [ActionName("CreateAttraction")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
-        public async Task<IActionResult> CreateAttraction([FromBody] AttractionCUDto item)
+        public async Task<IActionResult> CreateAttraction([FromBody] AttractionCreateDto item)
         {
             try
             {

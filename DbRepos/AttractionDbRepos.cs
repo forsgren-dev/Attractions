@@ -228,16 +228,11 @@ public class AttractionDbRepos
         };
     }
 
-    public async Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCUDto itemDto)
+    public async Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto itemDto)
     {
         if (itemDto == null)
         {
             throw new ArgumentException($"{nameof(itemDto)} cannot be null.");
-        }
-
-        if (itemDto.AttractionId != null)
-        {
-            throw new ArgumentException($"{nameof(itemDto.AttractionId)} must be null when creating a new attraction.");
         }
 
         itemDto.EnsureValidity();
@@ -246,7 +241,7 @@ public class AttractionDbRepos
         item.AttractionName = EnsureCapitalLetter(item.AttractionName);
         item.AttractionDescription = EnsureCapitalLetter(item.AttractionDescription);
 
-        await navProp_AttractionCUDto_to_AttractionDbM(itemDto, item);
+        await navProp_AttractionCreateDto_to_AttractionDbM(itemDto, item);
 
         _dbContext.Attractions.Add(item);
 
@@ -255,7 +250,7 @@ public class AttractionDbRepos
         return await ReadItemAsync(item.AttractionId);
     }
 
-    private async Task navProp_AttractionCUDto_to_AttractionDbM(AttractionCUDto itemDtoSrc, AttractionDbM itemDst)
+    private async Task navProp_AttractionCreateDto_to_AttractionDbM(AttractionCreateDto itemDtoSrc, AttractionDbM itemDst)
     {
         var countryName = EnsureCapitalLetter(itemDtoSrc.Country);
         var cityName = EnsureCapitalLetter(itemDtoSrc.City);
