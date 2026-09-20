@@ -24,21 +24,21 @@ namespace AppWebApi.Controllers
 
 
         [HttpGet]
-        [ActionName("ListUsers")]
+        [ActionName("ReadUsers")]
         [ProducesResponseType(typeof(ResponsePageDto<UserDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0, bool showComments = false)
+        public async Task<IActionResult> ReadUsers(int pageSize = 10, int pageNumber = 0, bool showComments = false)
         {
             try
             {
-                var result = await _service.ListUsersAsync(pageSize, pageNumber, showComments);
+                var result = await _service.ReadUsersAsync(pageSize, pageNumber, showComments);
 
-                _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                _logger.LogInformation($"{nameof(ReadUsers)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(List)} failed: {ex.Message}");
+                _logger.LogError($"{nameof(ReadUsers)} failed: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
