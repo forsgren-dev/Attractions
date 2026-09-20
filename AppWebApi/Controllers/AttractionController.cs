@@ -97,7 +97,7 @@ namespace AppWebApi.Controllers
             Guid id,
             int pageNumber = 0,
             int pageSize = 10,
-            bool showComments = false)
+            bool showComments = true)
         {
             try
             {
