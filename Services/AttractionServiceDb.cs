@@ -36,6 +36,9 @@ public class AttractionServiceDb : IAttractionService
         bool showComments = false) =>
         _repo.ReadItemAsync(id, pageSize, pageNumber, showComments);
 
+    public Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto item) =>
+        _repo.CreateAttractionAsync(item);
+
    
     #region constructors
     public AttractionServiceDb(

@@ -116,6 +116,34 @@ namespace AppWebApi.Controllers
             }
         }
 
+        [HttpPost()]
+        [ActionName("CreateAttraction")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> CreateAttraction([FromBody] AttractionCreateDto item)
+        {
+            try
+            {
+                if (item == null)
+                {
+                    throw new ArgumentException($"{nameof(item)} cannot be null.");
+                }
+
+                item.EnsureValidity();
+                _logger.LogInformation($"{nameof(CreateAttraction)}:");
+
+                var resp = await _service.CreateAttractionAsync(item);
+                _logger.LogInformation($"item {resp.Item.AttractionId} created");
+
+                return Ok(resp);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(CreateAttraction)}: {ex.Message}");
+                return BadRequest($"Could not create. Error {ex.Message}");
+            }
+        }
+
         //GET: api/attraction/seed?nrItems=10
 
         public AttractionController(

@@ -1,6 +1,6 @@
 namespace Models.DTO;
 
-public class AttractionCuDto 
+public class AttractionUpdateDto 
 {
     public Guid? AttractionId { get; set; }
     public string AttractionName { get; set; }

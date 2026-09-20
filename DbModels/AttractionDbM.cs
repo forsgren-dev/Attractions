@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Seido.Utilities.SeedGenerator;
 using Models;
+using Models.DTO;
 
 namespace DbModels;
 
@@ -49,6 +50,14 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
 
     #region constructor
     public AttractionDbM() { }
+
+    public AttractionDbM(AttractionCreateDto itemDto)
+    {
+        AttractionId = Guid.NewGuid();
+        AttractionName = itemDto.AttractionName;
+        AttractionDescription = itemDto.AttractionDescription;
+        Seeded = false;
+    }
 
     #endregion
 

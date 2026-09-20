@@ -53,11 +53,13 @@ builder.Services.AddScoped<AdminDbRepos>();
 builder.Services.AddScoped<AttractionDbRepos>();
 builder.Services.AddScoped<CountryDbRepos>();
 builder.Services.AddScoped<CityDbRepos>();
+builder.Services.AddScoped<CategoryDbRepos>();
 builder.Services.AddScoped<CommentDbRepos>();
 builder.Services.AddScoped<UserDbRepos>();
 
 builder.Services.AddScoped<IAdminService, AdminServiceDb>();
 builder.Services.AddScoped<IAttractionService, AttractionServiceDb>();
+builder.Services.AddScoped<ICategoryService, CategoryServiceDb>();
 builder.Services.AddScoped<IUserService, UserServiceDb>();
 builder.Services.AddScoped<ICommentService, CommentServiceDb>();
 
