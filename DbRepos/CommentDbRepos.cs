@@ -17,43 +17,71 @@ public class CommentDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<CommentDto>> ReadCommentsByAttractionIdAsync(
-        Guid attractionId,
-        int pageSize = 10,
-        int pageNumber = 0)
+    public async Task<ResponseItemDto<CommentDto>> ReadCommentAsync(Guid id)
     {
-        pageSize = Math.Max(1, pageSize);
-        pageNumber = Math.Max(0, pageNumber);
-
-        var query = _dbContext.Comments
+        var item = await _dbContext.Comments
             .AsNoTracking()
-            .Where(c => c.AttractionDbM.AttractionId == attractionId);
-
-        var totalCount = await query.CountAsync();
-
-        var comments = await query
-            .Skip(pageNumber * pageSize)
-            .Take(pageSize)
+            .Where(c => c.CommentId == id)
             .Select(c => new CommentDto
             {
                 CommentId = c.CommentId,
                 CommentText = c.CommentText,
+                CreatedAt = c.CreatedAt,
                 UserId = c.UserDbM.UserId,
                 UserName = c.UserDbM.UserName
             })
-            .ToListAsync();
+            .FirstOrDefaultAsync();
 
-        return new ResponsePageDto<CommentDto>
+        if (item == null)
+        {
+            throw new ArgumentException($"Item {id} is not existing.");
+        }
+
+        return new ResponseItemDto<CommentDto>
         {
 #if DEBUG
             ConnectionString = _dbContext.dbConnection,
 #endif
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-            DbItemsCount = totalCount,
-            Items = comments
+            Item = item
         };
+    }
+
+    public async Task<ResponseItemDto<CommentDto>> CreateCommentAsync(CommentCreateDto itemDto)
+    {
+        if (itemDto == null)
+        {
+            throw new ArgumentException($"{nameof(itemDto)} cannot be null.");
+        }
+
+        itemDto.EnsureValidity();
+
+        var item = new CommentDbM(itemDto);
+
+        await navProp_CommentCreatDto_to_CommentDbM(itemDto, item);
+
+        _dbContext.Comments.Add(item);
+
+        await _dbContext.SaveChangesAsync();
+
+        return await ReadCommentAsync(item.CommentId);
+    }
+
+    private async Task navProp_CommentCreatDto_to_CommentDbM(CommentCreateDto itemDtoSrc, CommentDbM itemDst)
+    {
+        var attraction = await _dbContext.Attractions.FirstOrDefaultAsync(a => a.AttractionId == itemDtoSrc.AttractionId);
+        if (attraction == null)
+        {
+            throw new ArgumentException($"Attraction id {itemDtoSrc.AttractionId} not existing.");
+        }
+
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == itemDtoSrc.UserId);
+        if (user == null)
+        {
+            throw new ArgumentException($"User id {itemDtoSrc.UserId} not existing.");
+        }
+
+        itemDst.AttractionDbM = attraction;
+        itemDst.UserDbM = user;
     }
 
     public async Task SeedAsync(int nrItems)

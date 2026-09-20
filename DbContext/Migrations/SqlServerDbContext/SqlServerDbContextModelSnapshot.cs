@@ -146,6 +146,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CommentText")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Seeded")
                         .HasColumnType("bit");
 
@@ -209,13 +212,28 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<int>("NrCities")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrCountries")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededAddresses")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrSeededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededComments")
                         .HasColumnType("int");
 
                     b.Property<int>("NrSeededUsers")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrUnseededAddresses")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrUnseededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededComments")
                         .HasColumnType("int");
 
                     b.Property<int>("NrUnseededUsers")

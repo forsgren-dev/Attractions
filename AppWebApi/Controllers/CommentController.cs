@@ -22,26 +22,31 @@ namespace AppWebApi.Controllers
 
         readonly ICommentService _service;
 
-        //GET: api/attraction/list
-        [HttpGet]
-        [ProducesResponseType(typeof(ResponsePageDto<CommentDto>), 200)]
+        [HttpPost]
+        [ActionName("CreateComment")]
+        [ProducesResponseType(typeof(ResponseItemDto<CommentDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> ReadCommentsByAttractionId(
-            Guid AttractionId,
-            int pageSize = 10,
-            int pageNumber = 0)
+        public async Task<IActionResult> CreateComment([FromBody] CommentCreateDto item)
         {
             try
             {
-                var result = await _service.ReadCommentsByAttractionIdAsync(AttractionId, pageSize, pageNumber);
+                if (item == null)
+                {
+                    throw new ArgumentException($"{nameof(item)} cannot be null.");
+                }
 
-                _logger.LogInformation($"{nameof(ReadCommentsByAttractionId)} succeeded. AttractionId: {AttractionId}, PageSize: {pageSize}, PageNumber: {pageNumber}");
+                item.EnsureValidity();
+                _logger.LogInformation($"{nameof(CreateComment)}:");
+
+                var result = await _service.CreateCommentAsync(item);
+
+                _logger.LogInformation($"item {result.Item.CommentId} created");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ReadCommentsByAttractionId)} failed. AttractionId: {AttractionId}, PageSize: {pageSize}, PageNumber: {pageNumber}, Error: {ex.Message}");
-                return BadRequest(ex.Message);
+                _logger.LogError($"{nameof(CreateComment)}: {ex.Message}");
+                return BadRequest($"Could not create. Error {ex.Message}");
             }
         }
 
@@ -53,9 +58,6 @@ namespace AppWebApi.Controllers
             _service = service;
         }
 
-
     }
-
-
 
 }

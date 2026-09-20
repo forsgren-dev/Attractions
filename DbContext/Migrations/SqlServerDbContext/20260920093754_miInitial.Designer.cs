@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260919095239_miInitial")]
+    [Migration("20260920093754_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -149,6 +149,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<string>("CommentText")
                         .HasColumnType("varchar(200)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Seeded")
                         .HasColumnType("bit");
 
@@ -212,13 +215,28 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<int>("NrCities")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrCountries")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededAddresses")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrSeededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededComments")
                         .HasColumnType("int");
 
                     b.Property<int>("NrSeededUsers")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrUnseededAddresses")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrUnseededAttractions")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededComments")
                         .HasColumnType("int");
 
                     b.Property<int>("NrUnseededUsers")

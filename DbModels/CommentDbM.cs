@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Seido.Utilities.SeedGenerator;
 using Models;
 using Microsoft.EntityFrameworkCore;
+using Models.DTO;
 
 namespace DbModels;
 
@@ -35,6 +36,16 @@ public class CommentDbM : Comment, ISeed<CommentDbM>
     public UserDbM UserDbM { get; set; }
 
     #endregion
+    
+    public CommentDbM() { }
+
+    public CommentDbM(CommentCreateDto itemDto)
+    {
+        CommentId = Guid.NewGuid();
+        CommentText = itemDto.CommentText;
+        CreatedAt = DateTime.UtcNow;
+        Seeded = false;
+    }
 
     public override CommentDbM Seed(SeedGenerator seeder)
     {

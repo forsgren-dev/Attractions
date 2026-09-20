@@ -92,6 +92,7 @@ public class AttractionDbRepos
                 {
                     CommentId = c.CommentId,
                     CommentText = c.CommentText,
+                    CreatedAt = c.CreatedAt,
                     UserId = c.UserDbM.UserId,
                     UserName = c.UserDbM.UserName
                 })
@@ -210,6 +211,7 @@ public class AttractionDbRepos
                         {
                             CommentId = c.CommentId,
                             CommentText = c.CommentText,
+                            CreatedAt = c.CreatedAt,
                             UserId = c.UserDbM.UserId,
                             UserName = c.UserDbM.UserName
                         })

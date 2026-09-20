@@ -9,6 +9,7 @@ public interface IComment
     public IAttraction Attraction { get; set; }
 
     public IUser User { get; set; }
+    public DateTime CreatedAt { get; set; }
 
 }
 
