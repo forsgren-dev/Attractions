@@ -60,10 +60,10 @@ namespace AppWebApi.Controllers
         }
 
           [HttpGet]
-        [ActionName("ReadAttractionsNoComments")]
+        [ActionName("ReadAttractionsWithNoComments")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> ReadAttractionsNoComments(
+        public async Task<IActionResult> ReadAttractionsWithNoComments(
             int pageNumber = 0,
             int pageSize = 10,
             string city = null,
@@ -71,18 +71,18 @@ namespace AppWebApi.Controllers
         {
             try
             {
-                var result = await _service.ReadAttractionsNoCommentsAsync(
+                var result = await _service.ReadAttractionsWithNoCommentsAsync(
                     pageSize,
                     pageNumber,
                     city,
                     country);
 
-                _logger.LogInformation($"{nameof(ReadAttractionsNoComments)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
+                _logger.LogInformation($"{nameof(ReadAttractionsWithNoComments)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ReadAttractionsNoComments)} failed: {ex.Message}");
+                _logger.LogError($"{nameof(ReadAttractionsWithNoComments)} failed: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
@@ -93,12 +93,16 @@ namespace AppWebApi.Controllers
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
-        public async Task<IActionResult> ReadItem(Guid id)
+        public async Task<IActionResult> ReadItem(
+            Guid id,
+            int pageNumber = 0,
+            int pageSize = 10,
+            bool showComments = false)
         {
             try
             {
-                _logger.LogInformation($"{nameof(ReadItem)}: {id}");
-                var resp = await _service.ReadSingleAttractionAsync(id);
+                _logger.LogInformation($"{nameof(ReadItem)}: {id}, PageSize: {pageSize}, PageNumber: {pageNumber}");
+                var resp = await _service.ReadSingleAttractionAsync(id, pageSize, pageNumber, showComments);
 
                 if (resp.Item is null)
                     return NotFound($"No attraction found with id {id}");

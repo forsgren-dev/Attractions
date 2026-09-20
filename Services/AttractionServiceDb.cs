@@ -22,14 +22,19 @@ public class AttractionServiceDb : IAttractionService
         bool showComments = false) =>
         _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country, showComments);
         
-    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsNoCommentsAsync(
+    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsWithNoCommentsAsync(
         int pageSize,
         int pageNumber,
         string city = null,
         string country = null) =>
         _repo.ReadAttractionsNoCommentsAsync(pageSize, pageNumber, city, country);
 
-    public Task<ResponseItemDto<AttractionDto>> ReadSingleAttractionAsync(Guid id) => _repo.ReadItemAsync(id);
+    public Task<ResponseItemDto<AttractionDto>> ReadSingleAttractionAsync(
+        Guid id,
+        int pageSize = 10,
+        int pageNumber = 0,
+        bool showComments = false) =>
+        _repo.ReadItemAsync(id, pageSize, pageNumber, showComments);
 
    
     #region constructors

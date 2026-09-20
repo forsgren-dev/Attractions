@@ -89,12 +89,12 @@ public class AttractionDbRepos
                     .Select(c => c.CategoryType.ToString())
                     .ToList(),
                 Comments = !showComments ? null : a.CommentDbM.Select(c => new CommentDto
-                        {
-                            CommentId = c.CommentId,
-                            CommentText = c.CommentText,
-                            UserId = c.UserDbM.UserId,
-                            UserName = c.UserDbM.UserName
-                        })
+                {
+                    CommentId = c.CommentId,
+                    CommentText = c.CommentText,
+                    UserId = c.UserDbM.UserId,
+                    UserName = c.UserDbM.UserName
+                })
                         .ToList()
             })
             .ToListAsync();
@@ -174,13 +174,18 @@ public class AttractionDbRepos
         };
     }
 
-    public async Task<ResponseItemDto<AttractionDto>> ReadItemAsync(Guid id)
+    public async Task<ResponseItemDto<AttractionDto>> ReadItemAsync(
+        Guid id,
+        int pageSize = 10,
+        int pageNumber = 0,
+        bool showComments = false)
     {
+        pageSize = Math.Max(1, pageSize);
+        pageNumber = Math.Max(0, pageNumber);
 
         var item = await _dbContext.Attractions
-        .Include(a => a.CommentDbM)
-        .ThenInclude(c => c.UserDbM)
             .AsNoTracking()
+            .Where(a => a.AttractionId == id)
             .Select(a => new AttractionDto
             {
                 AttractionId = a.AttractionId,
@@ -196,26 +201,29 @@ public class AttractionDbRepos
                 Categories = a.CategoryDbM
                     .Select(c => c.CategoryName)
                     .ToList(),
-                Comments = a.CommentDbM
-                    .Select(c => new CommentDto
-                    {
-                        CommentId = c.CommentId,
-                        CommentText = c.CommentText,
-                        UserId = c.UserDbM.UserId,
-                        UserName = c.UserDbM.UserName
-                    })
-                    .ToList()
-
+                Comments = !showComments ? null :
+                a.CommentDbM
+                        .OrderBy(c => c.CommentId)
+                        .Skip(pageNumber * pageSize)
+                        .Take(pageSize)
+                        .Select(c => new CommentDto
+                        {
+                            CommentId = c.CommentId,
+                            CommentText = c.CommentText,
+                            UserId = c.UserDbM.UserId,
+                            UserName = c.UserDbM.UserName
+                        })
+                        .ToList()
             })
-            .FirstOrDefaultAsync(a => a.AttractionId == id);
+            .FirstOrDefaultAsync();
 
         return new ResponseItemDto<AttractionDto>
         {
 #if DEBUG
-        ConnectionString = _dbContext.dbConnection,
+            ConnectionString = _dbContext.dbConnection,
 #endif
             Item = item
-    };
+        };
     }
 
     public async Task SeedAsync(int nrItems)
@@ -231,7 +239,7 @@ public class AttractionDbRepos
             await _dbContext.Cities
                 .Include(c => c.CountryDbM)
                 .ToListAsync());
-                
+
         var categories = new HashSet<CategoryDbM>(
             await _dbContext.Categories.ToListAsync());
 

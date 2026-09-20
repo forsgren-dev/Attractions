@@ -14,10 +14,14 @@ public interface IAttractionService
         string city = null,
         string country = null,
         bool showComments = false);
-    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsNoCommentsAsync(
+    public Task<ResponsePageDto<AttractionDto>> ReadAttractionsWithNoCommentsAsync(
         int pageSize = 10,
         int pageNumber = 0,
         string city = null,
         string country = null);
-    public Task<ResponseItemDto<AttractionDto>> ReadSingleAttractionAsync(Guid id);
+    public Task<ResponseItemDto<AttractionDto>> ReadSingleAttractionAsync(
+        Guid id,
+        int pageSize = 10,
+        int pageNumber = 0,
+        bool showComments = false);
 }
