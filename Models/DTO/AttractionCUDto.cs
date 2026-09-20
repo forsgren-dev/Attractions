@@ -1,14 +1,15 @@
 namespace Models.DTO;
 
-public class AttractionCreateDto
+public class AttractionCUDto
 {
+    public Guid? AttractionId { get; set; }
     public string AttractionName { get; set; }
     public string AttractionDescription { get; set; }
     public string Street { get; set; }
     public string PostalCode { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
-    public List<Guid> CategoriesId { get; set; } = null;
+    public List<Guid?> CategoriesId { get; set; } = null;
 
     public void EnsureValidity()
     {

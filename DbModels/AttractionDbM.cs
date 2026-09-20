@@ -51,7 +51,7 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
     #region constructor
     public AttractionDbM() { }
 
-    public AttractionDbM(AttractionCreateDto itemDto)
+    public AttractionDbM(AttractionCUDto itemDto)
     {
         AttractionId = Guid.NewGuid();
         AttractionName = itemDto.AttractionName;
