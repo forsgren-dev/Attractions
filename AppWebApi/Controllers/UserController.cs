@@ -73,15 +73,15 @@ namespace AppWebApi.Controllers
         }
 
         [HttpPost()]
-        [ActionName("CreateItem")]
+        [ActionName("CreateUser")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
-        public async Task<IActionResult> CreateItem([FromBody] UserCreateDto item)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto item)
         {
             try
             {
                 item.EnsureValidity();
-                _logger.LogInformation($"{nameof(CreateItem)}:");
+                _logger.LogInformation($"{nameof(CreateUser)}:");
 
                 var resp = await _service.CreateUserAsync(item);
                 _logger.LogInformation($"item {resp.Item.UserId} created");
@@ -90,7 +90,7 @@ namespace AppWebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(CreateItem)}: {ex.Message}");
+                _logger.LogError($"{nameof(CreateUser)}: {ex.Message}");
                 return BadRequest($"Could not create. Error {ex.Message}");
             }
         }
