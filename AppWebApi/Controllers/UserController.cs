@@ -49,15 +49,15 @@ namespace AppWebApi.Controllers
 
 
         [HttpGet()]
-        [ActionName("ReadItem")]
+        [ActionName("ReadUserById")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<UserDto>))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
-        public async Task<IActionResult> ReadItem(Guid id)
+        public async Task<IActionResult> ReadUserById(Guid id)
         {
             try
             {
-                _logger.LogInformation($"{nameof(ReadItem)}: {id}");
+                _logger.LogInformation($"{nameof(ReadUserById)}: {id}");
                 var resp = await _service.ReadUserAsync(id);
 
                 if (resp.Item is null)
@@ -67,7 +67,7 @@ namespace AppWebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ReadItem)}: {ex.Message}");
+                _logger.LogError($"{nameof(ReadUserById)}: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
