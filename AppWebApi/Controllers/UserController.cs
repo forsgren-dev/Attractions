@@ -27,11 +27,11 @@ namespace AppWebApi.Controllers
         [ActionName("ListUsers")]
         [ProducesResponseType(typeof(ResponsePageDto<UserDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0, bool flat = false)
+        public async Task<IActionResult> List(int pageSize = 10, int pageNumber = 0, bool showComments = false)
         {
             try
             {
-                var result = await _service.ListUsersAsync(pageSize, pageNumber, flat);
+                var result = await _service.ListUsersAsync(pageSize, pageNumber, showComments);
 
                 _logger.LogInformation($"{nameof(List)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

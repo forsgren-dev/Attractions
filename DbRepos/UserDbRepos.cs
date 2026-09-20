@@ -18,14 +18,14 @@ public class UserDbRepos
     private Encryptions _encryptions;
     private readonly MainDbContext _dbContext;
 
-    public async Task<ResponsePageDto<UserDto>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool flat = false)
+    public async Task<ResponsePageDto<UserDto>> ReadAllAsync(int pageSize = 10, int pageNumber = 0, bool showComments = false)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
 
         var totalCount = await _dbContext.Users.CountAsync();
 
-        if (!flat)
+        if (showComments)
         {
             var users = await _dbContext.Users
                 .AsNoTracking()
