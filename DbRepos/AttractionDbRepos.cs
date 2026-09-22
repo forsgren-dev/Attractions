@@ -318,12 +318,15 @@ public class AttractionDbRepos
     private async Task navProp_AttractionCreateDto_to_AttractionDbM(AttractionCreateDto itemDtoSrc, AttractionDbM itemDst)
     {
         var city = await GetOrCreateCityAsync(itemDtoSrc.City, itemDtoSrc.Country);
+        var street = EnsureCapitalLetter(itemDtoSrc.Street);
+        var postalCode = NormalizeOptionalText(itemDtoSrc.PostalCode);
+        await EnsureAddressAvailableAsync(street, postalCode, city.CityId);
 
         itemDst.AddressDbM = new AddressDbM
         {
             AddressId = Guid.NewGuid(),
-            Street = EnsureCapitalLetter(itemDtoSrc.Street),
-            PostalCode = itemDtoSrc.PostalCode?.Trim(),
+            Street = street,
+            PostalCode = postalCode,
             CityDbM = city,
             Seeded = false
         };
@@ -424,6 +427,9 @@ public class AttractionDbRepos
     private async Task navProp_AttractionUpdateDto_to_AttractionDbM(AttractionUpdateDto itemDtoSrc, AttractionDbM itemDst)
     {
         var city = await GetOrCreateCityAsync(itemDtoSrc.City, itemDtoSrc.Country);
+        var street = EnsureCapitalLetter(itemDtoSrc.Street);
+        var postalCode = NormalizeOptionalText(itemDtoSrc.PostalCode);
+        await EnsureAddressAvailableAsync(street, postalCode, city.CityId, itemDst.AddressDbM?.AddressId);
 
         if (itemDst.AddressDbM == null)
         {
@@ -434,10 +440,25 @@ public class AttractionDbRepos
             };
         }
 
-        itemDst.AddressDbM.Street = EnsureCapitalLetter(itemDtoSrc.Street);
-        itemDst.AddressDbM.PostalCode = itemDtoSrc.PostalCode?.Trim();
+        itemDst.AddressDbM.Street = street;
+        itemDst.AddressDbM.PostalCode = postalCode;
         itemDst.AddressDbM.CityDbM = city;
         itemDst.CategoryDbM = await GetCategoriesAsync(itemDtoSrc.CategoriesId);
+    }
+
+    private async Task EnsureAddressAvailableAsync(string street, string postalCode, Guid cityId, Guid? addressId = null)
+    {
+        if (street == null || postalCode == null)
+            return;
+
+        var exists = await _dbContext.Addresses.AnyAsync(a =>
+            a.AddressId != addressId
+            && EF.Property<Guid>(a, "CityDbMCityId") == cityId
+            && a.Street == street
+            && a.PostalCode == postalCode);
+
+        if (exists)
+            throw new ArgumentException("An address with the same street, postal code, city, and country already exists.");
     }
 
     private async Task<CityDbM> GetOrCreateCityAsync(string city, string country)
@@ -512,7 +533,7 @@ public class AttractionDbRepos
 
     private static string EnsureCapitalLetter(string value)
     {
-        value = value?.Trim();
+        value = NormalizeOptionalText(value);
 
         if (string.IsNullOrEmpty(value))
         {
@@ -520,6 +541,12 @@ public class AttractionDbRepos
         }
 
         return char.ToUpperInvariant(value[0]) + value[1..];
+    }
+
+    private static string NormalizeOptionalText(string value)
+    {
+        value = value?.Trim();
+        return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
     public async Task SeedAsync(int nrItems)
@@ -575,10 +602,22 @@ public class AttractionDbRepos
         var categories = new HashSet<CategoryDbM>(
             await _dbContext.Categories.ToListAsync());
 
+        var existingAddresses = await _dbContext.Addresses
+            .AsNoTracking()
+            .Select(a => new
+            {
+                CityId = EF.Property<Guid>(a, "CityDbMCityId"),
+                a.Street,
+                a.PostalCode
+            })
+            .ToListAsync();
+        var usedAddresses = new HashSet<(Guid CityId, string Street, string PostalCode)>(
+            existingAddresses.Select(a => AddressKey(a.CityId, a.Street, a.PostalCode)));
+
         for (int i = 0; i < nrItems; i++)
         {
             var countryName = seeder.Country;
-            var address = SeedAddress(seeder, countryName, countries, cities);
+            var address = SeedAddress(seeder, countryName, countries, cities, usedAddresses);
 
             var attraction = new AttractionDbM().Seed(seeder);
             attraction.AddressDbM = address;
@@ -599,30 +638,49 @@ public class AttractionDbRepos
         SeedGenerator seeder,
         string countryName,
         HashSet<CountryDbM> countries,
-        HashSet<CityDbM> cities)
+        HashSet<CityDbM> cities,
+        HashSet<(Guid CityId, string Street, string PostalCode)> usedAddresses)
     {
         var countryCheck = new CountryDbM { CountryName = countryName, Seeded = true };
         if (!countries.TryGetValue(countryCheck, out var country))
             throw new InvalidOperationException($"Seed country {countryName} was not prepared.");
 
-        var cityName = seeder.City(countryName);
-        var cityCheck = new CityDbM
+        for (int attempt = 0; attempt < 1000; attempt++)
         {
-            CityName = cityName,
-            CountryDbM = country,
-            Seeded = true
-        };
-        if (!cities.TryGetValue(cityCheck, out var city))
-            throw new InvalidOperationException($"Seed city {cityName}, {countryName} was not prepared.");
+            var cityName = seeder.City(countryName);
+            var cityCheck = new CityDbM
+            {
+                CityName = cityName,
+                CountryDbM = country,
+                Seeded = true
+            };
+            if (!cities.TryGetValue(cityCheck, out var city))
+                throw new InvalidOperationException($"Seed city {cityName}, {countryName} was not prepared.");
 
-        return new AddressDbM
-        {
-            AddressId = Guid.NewGuid(),
-            Street = seeder.StreetAddress(countryName),
-            PostalCode = seeder.ZipCode.ToString(),
-            CityDbM = city,
-            Seeded = true
-        };
+            var street = seeder.StreetAddress(countryName);
+            var postalCode = seeder.ZipCode.ToString();
+            if (!usedAddresses.Add(AddressKey(city.CityId, street, postalCode)))
+                continue;
+
+            return new AddressDbM
+            {
+                AddressId = Guid.NewGuid(),
+                Street = street,
+                PostalCode = postalCode,
+                CityDbM = city,
+                Seeded = true
+            };
+        }
+
+        throw new InvalidOperationException($"Could not generate a unique address in {countryName}.");
+    }
+
+    private static (Guid CityId, string Street, string PostalCode) AddressKey(Guid cityId, string street, string postalCode)
+    {
+        return (
+            cityId,
+            NormalizeOptionalText(street)?.ToUpperInvariant(),
+            NormalizeOptionalText(postalCode)?.ToUpperInvariant());
     }
 
     private List<CategoryDbM> SeedCategories(
