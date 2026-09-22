@@ -20,8 +20,9 @@ public class AdminServiceDb : IAdminService
     {
         _repo = repo;
     }
-    public AdminServiceDb(AdminDbRepos repo, ILogger<AdminServiceDb> logger):this(repo)
+    public AdminServiceDb(AdminDbRepos repo, ILogger<AdminServiceDb> logger)
     {
+        _repo = repo;
         _logger = logger;
     }
     #endregion
