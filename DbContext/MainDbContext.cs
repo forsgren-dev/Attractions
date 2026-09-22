@@ -54,11 +54,6 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
 
         #region override modelbuilder
 
-        modelBuilder.Entity<AddressDbM>()
-            .HasIndex(nameof(AddressDbM.Street), nameof(AddressDbM.PostalCode), "CityDbMCityId")
-            .IsUnique()
-            .HasFilter("[Street] IS NOT NULL AND [PostalCode] IS NOT NULL");
-
         modelBuilder.Entity<CommentDbM>()
             .HasOne(c => c.UserDbM)
             .WithMany(u => u.CommentDbM)

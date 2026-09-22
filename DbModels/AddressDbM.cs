@@ -9,6 +9,7 @@ using Models;
 namespace DbModels;
 
 [Index(nameof(Seeded))]
+[Index(nameof(Street), nameof(PostalCode), nameof(CityDbMCityId), IsUnique = true)]
 [Table("Addresses", Schema = "supusr")]
 public class AddressDbM : Address
 {
@@ -30,7 +31,11 @@ public class AddressDbM : Address
         set => throw new NotImplementedException();
     }
    #region foreign key
+    [JsonIgnore]
+    public Guid CityDbMCityId { get; set; }
+
    [Required]
+    [ForeignKey(nameof(CityDbMCityId))]
     public CityDbM CityDbM { get; set; }
 
     #endregion
