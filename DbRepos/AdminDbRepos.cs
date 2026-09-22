@@ -110,8 +110,10 @@ public class AdminDbRepos
                     NrUnseededAddresses = Convert.ToInt32(reader["NrUnseededAddresses"]),
                     NrSeededComments = Convert.ToInt32(reader["NrSeededComments"]),
                     NrUnseededComments = Convert.ToInt32(reader["NrUnseededComments"]),
-                    NrCities = Convert.ToInt32(reader["NrCities"]),
-                    NrCountries = Convert.ToInt32(reader["NrCountries"])
+                    NrSeededCities = Convert.ToInt32(reader["NrSeededCities"]),
+                    NrUnseededCities = Convert.ToInt32(reader["NrUnseededCities"]),
+                    NrSeededCountries = Convert.ToInt32(reader["NrSeededCountries"]),
+                    NrUnseededCountries = Convert.ToInt32(reader["NrUnseededCountries"])
                 };
             }
 

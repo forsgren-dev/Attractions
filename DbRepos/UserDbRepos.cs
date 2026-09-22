@@ -145,6 +145,34 @@ public class UserDbRepos
         return await ReadUserAsync(item.UserId);
     }
 
+    public async Task<ResponseItemDto<UserDto>> DeleteUserAsync(Guid id)
+    {
+        var item = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.UserId == id);
+
+        if (item == null)
+        {
+            throw new ArgumentException($"Item {id} is not existing.");
+        }
+
+        var deletedItem = new UserDto
+        {
+            UserId = item.UserId,
+            UserName = item.UserName
+        };
+
+        _dbContext.Users.Remove(item);
+        await _dbContext.SaveChangesAsync();
+
+        return new ResponseItemDto<UserDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            Item = deletedItem
+        };
+    }
+
     private async Task navProp_UserUpdateDto_to_UserDbM(UserUpdateDto itemDtoSrc, UserDbM itemDst)
     {
         List<CommentDbM> comments = null;

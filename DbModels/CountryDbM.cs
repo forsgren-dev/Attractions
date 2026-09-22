@@ -8,9 +8,10 @@ using Models;
 
 namespace DbModels;
 
-[Index(nameof(CountryName), IsUnique = true)]
+[Index(nameof(CountryName), nameof(Seeded), IsUnique = true)]
+[Index(nameof(Seeded))]
 [Table("Countries", Schema = "supusr")]
-public class CountryDbM : Country, IEquatable<CountryDbM>
+public class CountryDbM : Country, IEquatable<CountryDbM>, ISeed<CountryDbM>
 {
     
  [Key]
@@ -25,14 +26,21 @@ public class CountryDbM : Country, IEquatable<CountryDbM>
 
     public List<CityDbM> CityDbM { get; set; } = new();
 
+    public override CountryDbM Seed(SeedGenerator seeder)
+    {
+        base.Seed(seeder);
+        return this;
+    }
+
     public bool Equals(CountryDbM other) =>
-        StringComparer.OrdinalIgnoreCase.Equals(CountryName, other?.CountryName);
+        other is not null && Seeded == other.Seeded
+        && StringComparer.OrdinalIgnoreCase.Equals(CountryName, other.CountryName);
 
     public override bool Equals(object obj) =>
         Equals(obj as CountryDbM);
 
     public override int GetHashCode() =>
-        StringComparer.OrdinalIgnoreCase.GetHashCode(CountryName ?? string.Empty);
+        HashCode.Combine(Seeded, StringComparer.OrdinalIgnoreCase.GetHashCode(CountryName ?? string.Empty));
 
 }
    

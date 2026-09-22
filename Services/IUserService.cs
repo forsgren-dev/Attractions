@@ -15,5 +15,6 @@ public interface IUserService
             bool showComments = false);
       public Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id);
       public Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto item);
+      public Task<ResponseItemDto<UserDto>> DeleteUserAsync(Guid id);
 
 }

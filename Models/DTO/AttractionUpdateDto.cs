@@ -10,6 +10,7 @@ public class AttractionUpdateDto
     public string City { get; set; }
     public string Country { get; set; }
     public List<Guid?> CategoriesId { get; set; } = null;
+    
 
     public void EnsureValidity()
     {

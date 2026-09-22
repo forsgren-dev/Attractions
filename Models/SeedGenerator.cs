@@ -49,6 +49,9 @@ namespace Seido.Utilities.SeedGenerator
 
         #region Addresses
         public string Country => _seeds.Addresses[this.Next(0, _seeds.Addresses.Count)].Country;
+        public IEnumerable<(string Country, string City)> CityCountries =>
+            _seeds.Addresses.SelectMany(address =>
+                address.Cities.Select(city => (address.Country, city)));
         public string City(string Country = null)
         {
             if (Country != null)

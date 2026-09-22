@@ -16,5 +16,7 @@ public class AttractionDto
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<CommentDto> Comments { get; set; }
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ResponsePageDto<CommentDto> CommentsPage { get; set; }
 
 }

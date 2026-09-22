@@ -11,5 +11,5 @@ Start debugger.
 
 Seed database from the api/Admin/SeedDatabase endpoiont.
 
-NOTE: Cities and Contries are not concidered to be seeded, even when filled by the seeder, so they will remain in the database after seeded data deletion. This is due to the fact that these are real cities/contries and deleting them would remove added addresses in these cities/countries.  
+With the built-in seed source, the seeder creates all 110 cities and 4 countries as seeded data. Real addresses use separate city and country records, even when the names match. Removing seeded data also removes seeded cities and countries while preserving real ones.
 

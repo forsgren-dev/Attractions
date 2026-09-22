@@ -73,6 +73,30 @@ namespace AppWebApi.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        [ActionName("DeleteItem")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<CommentDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> DeleteItem(string id)
+        {
+            try
+            {
+                var idArg = Guid.Parse(id);
+
+                _logger.LogInformation($"{nameof(DeleteItem)}: {nameof(idArg)}: {idArg}");
+
+                var item = await _service.DeleteCommentAsync(idArg);
+
+                _logger.LogInformation($"item {idArg} deleted");
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(DeleteItem)}: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
         public CommentController(
                            ILogger<CommentController> logger,
                            ICommentService service)

@@ -13,6 +13,7 @@ public interface IAttractionService
         string description = null,
         string city = null,
         string country = null,
+        bool? hasComments = null,
         bool showComments = false);
     public Task<ResponsePageDto<AttractionDto>> ReadAttractionsWithNoCommentsAsync(
         int pageSize = 10,
@@ -24,6 +25,8 @@ public interface IAttractionService
         int pageSize = 10,
         int pageNumber = 0,
         bool showComments = false);
+    public Task<ResponseItemDto<AttractionUpdateDto>> ReadAttractionDtoAsync(Guid id);
     public Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto item);
     public Task<ResponseItemDto<AttractionDto>> UpdateAttractionAsync(AttractionUpdateDto item);
+    public Task<ResponseItemDto<AttractionDto>> DeleteAttractionAsync(Guid id);
 }

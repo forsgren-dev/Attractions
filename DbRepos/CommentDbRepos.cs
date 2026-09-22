@@ -88,6 +88,38 @@ public class CommentDbRepos
         };
     }
 
+    public async Task<ResponseItemDto<CommentDto>> DeleteCommentAsync(Guid id)
+    {
+        var item = await _dbContext.Comments
+            .Include(c => c.UserDbM)
+            .FirstOrDefaultAsync(c => c.CommentId == id);
+
+        if (item == null)
+        {
+            throw new ArgumentException($"Item {id} is not existing.");
+        }
+
+        var deletedItem = new CommentDto
+        {
+            CommentId = item.CommentId,
+            CommentText = item.CommentText,
+            CreatedAt = item.CreatedAt,
+            UserId = item.UserDbM?.UserId ?? Guid.Empty,
+            UserName = item.UserDbM?.UserName
+        };
+
+        _dbContext.Comments.Remove(item);
+        await _dbContext.SaveChangesAsync();
+
+        return new ResponseItemDto<CommentDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            Item = deletedItem
+        };
+    }
+
     private async Task navProp_CommentCreatDto_to_CommentDbM(CommentCreateDto itemDtoSrc, CommentDbM itemDst)
     {
         var attraction = await _dbContext.Attractions.FirstOrDefaultAsync(a => a.AttractionId == itemDtoSrc.AttractionId);

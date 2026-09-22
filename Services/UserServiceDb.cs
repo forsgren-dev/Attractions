@@ -21,6 +21,7 @@ public class UserServiceDb : IUserService
 
     public Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id) => _repo.ReadUserAsync(id);
     public Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto item) => _repo.CreateUserAsync(item);
+    public Task<ResponseItemDto<UserDto>> DeleteUserAsync(Guid id) => _repo.DeleteUserAsync(id);
 
     #region constructors
     public UserServiceDb(

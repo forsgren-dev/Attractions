@@ -19,8 +19,9 @@ public class AttractionServiceDb : IAttractionService
         string description = null,
         string city = null,
         string country = null,
+        bool? hasComments = null,
         bool showComments = false) =>
-        _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country, showComments);
+        _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country, hasComments, showComments);
         
     public Task<ResponsePageDto<AttractionDto>> ReadAttractionsWithNoCommentsAsync(
         int pageSize,
@@ -36,11 +37,17 @@ public class AttractionServiceDb : IAttractionService
         bool showComments = false) =>
         _repo.ReadItemAsync(id, pageSize, pageNumber, showComments);
 
+    public Task<ResponseItemDto<AttractionUpdateDto>> ReadAttractionDtoAsync(Guid id) =>
+        _repo.ReadUpdateDtoAsync(id);
+
     public Task<ResponseItemDto<AttractionDto>> CreateAttractionAsync(AttractionCreateDto item) =>
         _repo.CreateAttractionAsync(item);
 
     public Task<ResponseItemDto<AttractionDto>> UpdateAttractionAsync(AttractionUpdateDto item) =>
         _repo.UpdateAttractionAsync(item);
+
+    public Task<ResponseItemDto<AttractionDto>> DeleteAttractionAsync(Guid id) =>
+        _repo.DeleteAttractionAsync(id);
 
    
     #region constructors

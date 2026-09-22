@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.Common;
+using Microsoft.Data.SqlClient;
+using MySqlConnector;
+using Npgsql;
 
 using Seido.Utilities.SeedGenerator;
 using DbModels;
@@ -30,6 +34,7 @@ public class AttractionDbRepos
         string description = null,
         string city = null,
         string country = null,
+        bool? hasComments = null,
         bool showComments = false)
     {
         pageSize = Math.Max(1, pageSize);
@@ -66,6 +71,15 @@ public class AttractionDbRepos
         if (!string.IsNullOrEmpty(country))
         {
             query = query.Where(a => a.AddressDbM.CityDbM.CountryDbM.CountryName.ToLower().Contains(country));
+        }
+
+        if (hasComments == true)
+        {
+            query = query.Where(a => a.CommentDbM.Any());
+        }
+        else if (hasComments == false)
+        {
+            query = query.Where(a => !a.CommentDbM.Any());
         }
 
         var totalCount = await query.CountAsync();
@@ -201,25 +215,76 @@ public class AttractionDbRepos
                 },
                 Categories = a.CategoryDbM
                     .Select(c => c.CategoryName)
-                    .ToList(),
-                Comments = !showComments ? null :
-                a.CommentDbM
-                        .OrderBy(c => c.CommentId)
-                        .Skip(pageNumber * pageSize)
-                        .Take(pageSize)
-                        .Select(c => new CommentDto
-                        {
-                            CommentId = c.CommentId,
-                            CommentText = c.CommentText,
-                            CreatedAt = c.CreatedAt,
-                            UserId = c.UserDbM.UserId,
-                            UserName = c.UserDbM.UserName
-                        })
-                        .ToList()
+                    .ToList()
             })
             .FirstOrDefaultAsync();
 
+        if (item != null && showComments)
+        {
+            var commentsQuery = _dbContext.Comments
+                .AsNoTracking()
+                .Where(c => c.AttractionDbM.AttractionId == id);
+
+            var totalCount = await commentsQuery.CountAsync();
+
+            var comments = await commentsQuery
+                .OrderBy(c => c.CommentId)
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .Select(c => new CommentDto
+                {
+                    CommentId = c.CommentId,
+                    CommentText = c.CommentText,
+                    CreatedAt = c.CreatedAt,
+                    UserId = c.UserDbM.UserId,
+                    UserName = c.UserDbM.UserName
+                })
+                .ToListAsync();
+
+            item.Comments = comments;
+            item.CommentsPage = new ResponsePageDto<CommentDto>
+            {
+#if DEBUG
+                ConnectionString = _dbContext.dbConnection,
+#endif
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                DbItemsCount = totalCount,
+                Items = comments
+            };
+        }
+
         return new ResponseItemDto<AttractionDto>
+        {
+#if DEBUG
+            ConnectionString = _dbContext.dbConnection,
+#endif
+            Item = item
+        };
+    }
+
+    public async Task<ResponseItemDto<AttractionUpdateDto>> ReadUpdateDtoAsync(Guid id)
+    {
+        var item = await _dbContext.Attractions
+            .AsNoTracking()
+            .Where(a => a.AttractionId == id)
+            .Select(a => new AttractionUpdateDto
+            {
+                AttractionId = a.AttractionId,
+                AttractionName = a.AttractionName,
+                AttractionDescription = a.AttractionDescription,
+                Street = a.AddressDbM.Street,
+                PostalCode = a.AddressDbM.PostalCode,
+                City = a.AddressDbM.CityDbM.CityName,
+                Country = a.AddressDbM.CityDbM.CountryDbM.CountryName,
+                CategoriesId = a.CategoryDbM
+                    .Select(c => (Guid?)c.CategoryId)
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
+
+        return new ResponseItemDto<AttractionUpdateDto>
         {
 #if DEBUG
             ConnectionString = _dbContext.dbConnection,
@@ -299,6 +364,63 @@ public class AttractionDbRepos
         return await ReadItemAsync(item.AttractionId);
     }
 
+    public async Task<ResponseItemDto<AttractionDto>> DeleteAttractionAsync(Guid id)
+    {
+        var existing = await ReadItemAsync(id, showComments: true);
+        if (existing.Item == null)
+        {
+            throw new ArgumentException($"Item {id} is not existing.");
+        }
+
+        await DeleteAttractionByStoredProcedureAsync(id);
+
+        return existing;
+    }
+
+    private async Task DeleteAttractionByStoredProcedureAsync(Guid id)
+    {
+        var connection = _dbContext.Database.GetDbConnection();
+        using var command = connection.CreateCommand();
+
+        List<DbParameter> parameters;
+        if (connection is MySqlConnection)
+        {
+            command.CommandText = "supusr_spDeleteAttraction";
+            command.CommandType = CommandType.StoredProcedure;
+            parameters =
+            [
+                new MySqlParameter("attractionIdParam", id)
+            ];
+        }
+        else if (connection is NpgsqlConnection)
+        {
+            command.CommandText = "SELECT supusr.\"spDeleteAttraction\"(@attractionIdParam)";
+            command.CommandType = CommandType.Text;
+            parameters =
+            [
+                new NpgsqlParameter("attractionIdParam", id)
+            ];
+        }
+        else
+        {
+            command.CommandText = "supusr.spDeleteAttraction";
+            command.CommandType = CommandType.StoredProcedure;
+            parameters =
+            [
+                new SqlParameter("attractionIdParam", id)
+            ];
+        }
+
+        command.Parameters.AddRange(parameters.ToArray());
+
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync();
+        }
+
+        await command.ExecuteNonQueryAsync();
+    }
+
     private async Task navProp_AttractionUpdateDto_to_AttractionDbM(AttractionUpdateDto itemDtoSrc, AttractionDbM itemDst)
     {
         var city = await GetOrCreateCityAsync(itemDtoSrc.City, itemDtoSrc.Country);
@@ -324,14 +446,15 @@ public class AttractionDbRepos
         var cityName = EnsureCapitalLetter(city);
 
         var countryItem = await _dbContext.Countries
-            .FirstOrDefaultAsync(c => c.CountryName.ToLower() == countryName.ToLower());
+            .FirstOrDefaultAsync(c => !c.Seeded && c.CountryName.ToLower() == countryName.ToLower());
 
         if (countryItem == null)
         {
             countryItem = new CountryDbM
             {
                 CountryId = Guid.NewGuid(),
-                CountryName = countryName
+                CountryName = countryName,
+                Seeded = false
             };
 
             _dbContext.Countries.Add(countryItem);
@@ -341,6 +464,7 @@ public class AttractionDbRepos
             .Include(c => c.CountryDbM)
             .FirstOrDefaultAsync(c =>
                 c.CityName.ToLower() == cityName.ToLower()
+                && !c.Seeded
                 && c.CountryDbM.CountryName.ToLower() == countryName.ToLower());
 
         if (cityItem == null)
@@ -349,7 +473,8 @@ public class AttractionDbRepos
             {
                 CityId = Guid.NewGuid(),
                 CityName = cityName,
-                CountryDbM = countryItem
+                CountryDbM = countryItem,
+                Seeded = false
             };
 
             _dbContext.Cities.Add(cityItem);
@@ -404,12 +529,48 @@ public class AttractionDbRepos
         var seeder = File.Exists(fn) ? new SeedGenerator(fn) : new SeedGenerator();
 
         var countries = new HashSet<CountryDbM>(
-            await _dbContext.Countries.ToListAsync());
+            await _dbContext.Countries.Where(c => c.Seeded).ToListAsync());
 
         var cities = new HashSet<CityDbM>(
             await _dbContext.Cities
+                .Where(c => c.Seeded)
                 .Include(c => c.CountryDbM)
                 .ToListAsync());
+
+        foreach (var (countryName, cityName) in seeder.CityCountries)
+        {
+            var countryCheck = new CountryDbM { CountryName = countryName, Seeded = true };
+            if (!countries.TryGetValue(countryCheck, out var country))
+            {
+                country = new CountryDbM
+                {
+                    CountryId = Guid.NewGuid(),
+                    CountryName = countryName,
+                    Seeded = true
+                };
+                countries.Add(country);
+                _dbContext.Countries.Add(country);
+            }
+
+            var cityCheck = new CityDbM
+            {
+                CityName = cityName,
+                CountryDbM = country,
+                Seeded = true
+            };
+            if (!cities.Contains(cityCheck))
+            {
+                var city = new CityDbM
+                {
+                    CityId = Guid.NewGuid(),
+                    CityName = cityName,
+                    CountryDbM = country,
+                    Seeded = true
+                };
+                cities.Add(city);
+                _dbContext.Cities.Add(city);
+            }
+        }
 
         var categories = new HashSet<CategoryDbM>(
             await _dbContext.Categories.ToListAsync());
@@ -440,37 +601,19 @@ public class AttractionDbRepos
         HashSet<CountryDbM> countries,
         HashSet<CityDbM> cities)
     {
-        var countryCheck = new CountryDbM { CountryName = countryName };
-
+        var countryCheck = new CountryDbM { CountryName = countryName, Seeded = true };
         if (!countries.TryGetValue(countryCheck, out var country))
-        {
-            country = new CountryDbM
-            {
-                CountryId = Guid.NewGuid(),
-                CountryName = countryName
-            };
-
-            countries.Add(country);
-        }
+            throw new InvalidOperationException($"Seed country {countryName} was not prepared.");
 
         var cityName = seeder.City(countryName);
         var cityCheck = new CityDbM
         {
             CityName = cityName,
-            CountryDbM = country
+            CountryDbM = country,
+            Seeded = true
         };
-
         if (!cities.TryGetValue(cityCheck, out var city))
-        {
-            city = new CityDbM
-            {
-                CityId = Guid.NewGuid(),
-                CityName = cityName,
-                CountryDbM = country
-            };
-
-            cities.Add(city);
-        }
+            throw new InvalidOperationException($"Seed city {cityName}, {countryName} was not prepared.");
 
         return new AddressDbM
         {

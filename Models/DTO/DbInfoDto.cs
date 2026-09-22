@@ -10,7 +10,9 @@ namespace Models.DTO
         public int NrUnseededAddresses { get; set; } = 0;
         public int NrSeededComments { get; set; } = 0;
         public int NrUnseededComments { get; set; } = 0;
-        public int NrCities { get; set; } = 0;
-        public int NrCountries { get; set; } = 0;
+        public int NrSeededCities { get; set; } = 0;
+        public int NrUnseededCities { get; set; } = 0;
+        public int NrSeededCountries { get; set; } = 0;
+        public int NrUnseededCountries { get; set; } = 0;
     }
 }

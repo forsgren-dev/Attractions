@@ -22,7 +22,7 @@ namespace AppWebApi.Controllers
 
         readonly IAttractionService _service;
 
-        //GET: api/attraction/readallattractions
+        //GET: api/attraction/readattractions - Listar attractions med filter och pagination
         [HttpGet]
         [ActionName("ReadAttractions")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
@@ -35,6 +35,7 @@ namespace AppWebApi.Controllers
             string description = null,
             string city = null,
             string country = null,
+            bool? hasComments = null,
             bool showComments = false)
         {
             try
@@ -47,6 +48,7 @@ namespace AppWebApi.Controllers
                     description,
                     city,
                     country,
+                    hasComments,
                     showComments);
 
                 _logger.LogInformation($"{nameof(ReadAttractions)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
@@ -58,8 +60,8 @@ namespace AppWebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-          [HttpGet]
+        //GET: api/attraction/readattractionswithnocomments - Listar attraktioner som saknar kommentarer
+        [HttpGet]
         [ActionName("ReadAttractionsWithNoComments")]
         [ProducesResponseType(typeof(ResponsePageDto<AttractionDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
@@ -87,7 +89,6 @@ namespace AppWebApi.Controllers
             }
         }
 
-
         [HttpGet()]
         [ActionName("ReadAttractionById")]
         [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
@@ -114,6 +115,32 @@ namespace AppWebApi.Controllers
                 _logger.LogError($"{nameof(ReadAttractionById)}: {ex.Message}");
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet()]
+        [ActionName("ReadItemDto")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionUpdateDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(404, Type = typeof(string))]
+        public async Task<IActionResult> ReadItemDto(Guid id)
+        {
+            try
+            {
+                _logger.LogInformation($"{nameof(ReadItemDto)}: {id}");
+
+                var resp = await _service.ReadAttractionDtoAsync(id);
+
+                if (resp.Item is null)
+                    return NotFound($"No attraction found with id {id}");
+
+                return Ok(resp);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(ReadItemDto)}: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [HttpPost()]
@@ -172,7 +199,30 @@ namespace AppWebApi.Controllers
             }
         }
 
-        //GET: api/attraction/seed?nrItems=10
+        [HttpDelete("{id}")]
+        [ActionName("DeleteItem")]
+        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionDto>))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> DeleteItem(string id)
+        {
+            try
+            {
+                var idArg = Guid.Parse(id);
+
+                _logger.LogInformation($"{nameof(DeleteItem)}: {nameof(idArg)}: {idArg}");
+
+                var item = await _service.DeleteAttractionAsync(idArg);
+
+                _logger.LogInformation($"item {idArg} deleted");
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(DeleteItem)}: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         public AttractionController(
             ILogger<AttractionController> logger,

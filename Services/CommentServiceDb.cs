@@ -19,6 +19,9 @@ public class CommentServiceDb : ICommentService
     public Task<ResponseItemDto<CommentDto>> CreateCommentAsync(CommentCreateDto item) =>
         _repo.CreateCommentAsync(item);
 
+    public Task<ResponseItemDto<CommentDto>> DeleteCommentAsync(Guid id) =>
+        _repo.DeleteCommentAsync(id);
+
     #region constructors
     public CommentServiceDb(CommentDbRepos repo)
     {

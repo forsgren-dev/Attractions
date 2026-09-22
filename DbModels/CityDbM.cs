@@ -9,8 +9,9 @@ using Models;
 namespace DbModels;
 
 [Index(nameof(CityName))]
+[Index(nameof(Seeded))]
 [Table("Cities", Schema = "supusr")]
-public class CityDbM : City, IEquatable<CityDbM>
+public class CityDbM : City, IEquatable<CityDbM>, ISeed<CityDbM>
 {
     
     [Key]
@@ -37,8 +38,18 @@ public class CityDbM : City, IEquatable<CityDbM>
 
     public List<AddressDbM> AddressDbM { get; set; } = new();
 
+    public override CityDbM Seed(SeedGenerator seeder)
+    {
+        CityId = Guid.NewGuid();
+        CountryDbM = new CountryDbM().Seed(seeder);
+        CityName = seeder.City(CountryDbM.CountryName);
+        Seeded = true;
+        return this;
+    }
+
     public bool Equals(CityDbM other) =>
-        StringComparer.OrdinalIgnoreCase.Equals(CityName, other?.CityName)
+        other is not null && Seeded == other.Seeded
+        && StringComparer.OrdinalIgnoreCase.Equals(CityName, other.CityName)
         && StringComparer.OrdinalIgnoreCase.Equals(
             CountryDbM?.CountryName,
             other?.CountryDbM?.CountryName);
@@ -48,6 +59,7 @@ public class CityDbM : City, IEquatable<CityDbM>
 
     public override int GetHashCode() =>
         HashCode.Combine(
+            Seeded,
             StringComparer.OrdinalIgnoreCase.GetHashCode(CityName ?? string.Empty),
             StringComparer.OrdinalIgnoreCase.GetHashCode(CountryDbM?.CountryName ?? string.Empty));
     
