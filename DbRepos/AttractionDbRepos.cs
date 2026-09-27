@@ -241,7 +241,6 @@ public class AttractionDbRepos
                 })
                 .ToListAsync();
 
-            item.Comments = comments;
             item.CommentsPage = new ResponsePageDto<CommentDto>
             {
 #if DEBUG
