@@ -6,6 +6,9 @@ IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'gstusr')
     EXEC('CREATE SCHEMA gstusr');
 GO
 
+PRINT 'CREATING VIEW gstusr.vwDbInfo';
+GO
+
 CREATE OR ALTER VIEW gstusr.vwDbInfo AS
     SELECT (SELECT COUNT(*) FROM supusr.Users WHERE Seeded = 1) as nrSeededUsers, 
         (SELECT COUNT(*) FROM supusr.Users WHERE Seeded = 0) as nrUnseededUsers,
@@ -19,6 +22,9 @@ CREATE OR ALTER VIEW gstusr.vwDbInfo AS
         (SELECT COUNT(*) FROM supusr.Cities WHERE Seeded = 0) as nrUnseededCities,
         (SELECT COUNT(*) FROM supusr.Countries WHERE Seeded = 1) as nrSeededCountries,
         (SELECT COUNT(*) FROM supusr.Countries WHERE Seeded = 0) as nrUnseededCountries;
+GO
+
+PRINT '-- CREATING STORED PROCEDURE supusr.spDeleteAll';
 GO
 
 CREATE OR ALTER PROC supusr.spDeleteAll
@@ -50,6 +56,8 @@ CREATE OR ALTER PROC supusr.spDeleteAll
 
     SELECT * FROM gstusr.vwDbInfo;
 GO
+PRINT '-- CREATING STORED PROCEDURE supusr.spDeleteAttraction';
+GO
 
 CREATE OR ALTER PROC supusr.spDeleteAttraction
     @attractionIdParam UNIQUEIDENTIFIER
@@ -62,3 +70,7 @@ AS
     DELETE FROM supusr.Attractions
     WHERE AttractionId = @attractionIdParam;
 GO
+
+PRINT '-- EVERYTHING EXECUTED SUCCESSFULLY. READY TO SWAGGER!';
+GO
+
