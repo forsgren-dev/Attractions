@@ -91,6 +91,8 @@ public class AttractionDbRepos
         var totalCount = await query.CountAsync();
 
         var attractions = await query
+            .OrderBy(a => a.AttractionName)
+            .ThenBy(a => a.AttractionId)
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
             .Select(a => new AttractionDto
@@ -162,6 +164,8 @@ public class AttractionDbRepos
         var totalCount = await query.CountAsync();
 
         var attractions = await query
+            .OrderBy(a => a.AttractionName)
+            .ThenBy(a => a.AttractionId)
             .Skip(pageNumber * pageSize)
             .Take(pageSize)
             .Select(a => new AttractionDto
