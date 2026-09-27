@@ -9,7 +9,7 @@ public class AttractionUpdateDto
     public string PostalCode { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
-    public List<Guid?> CategoriesId { get; set; } = null;
+    public List<Guid> CategoriesId { get; set; } = null;
     
 
     public void EnsureValidity()
@@ -37,6 +37,11 @@ public class AttractionUpdateDto
         if (string.IsNullOrWhiteSpace(Country))
         {
             throw new ArgumentException($"{nameof(Country)} cannot be empty.");
+        }
+
+        if (CategoriesId == null || CategoriesId.Count == 0)
+        {
+            throw new ArgumentException($"{nameof(CategoriesId)} must contain at least one category id.");
         }
     }
 }

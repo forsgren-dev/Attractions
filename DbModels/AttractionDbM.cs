@@ -31,6 +31,7 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
         get => CategoryDbM.Cast<ICategory>().ToList();
         set => throw new NotImplementedException();
     }
+    [Required]
     public List<CategoryDbM> CategoryDbM { get; set; } = new();
 
 

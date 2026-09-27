@@ -275,7 +275,7 @@ public class AttractionDbRepos
                 City = a.AddressDbM.CityDbM.CityName,
                 Country = a.AddressDbM.CityDbM.CountryDbM.CountryName,
                 CategoriesId = a.CategoryDbM
-                    .Select(c => (Guid?)c.CategoryId)
+                    .Select(c => c.CategoryId)
                     .ToList()
             })
             .FirstOrDefaultAsync();
@@ -500,7 +500,7 @@ public class AttractionDbRepos
         return cityItem;
     }
 
-    private async Task<List<CategoryDbM>> GetCategoriesAsync(List<Guid?> categoryIds)
+    private async Task<List<CategoryDbM>> GetCategoriesAsync(List<Guid> categoryIds)
     {
         if (categoryIds == null)
         {
@@ -510,12 +510,12 @@ public class AttractionDbRepos
         var categories = new List<CategoryDbM>();
         foreach (var id in categoryIds.Distinct())
         {
-            if (id is null || id == Guid.Empty)
+            if (id == Guid.Empty)
             {
                 throw new ArgumentException($"{nameof(categoryIds)} cannot contain empty ids.");
             }
 
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id.Value);
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
             if (category == null)
             {
                 throw new ArgumentException($"Category id {id} not existing.");
