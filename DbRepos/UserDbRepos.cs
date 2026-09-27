@@ -22,7 +22,8 @@ public class UserDbRepos
         int pageSize = 10,
         int pageNumber = 0,
         string userName = null,
-        bool showComments = false)
+        bool showComments = false,
+        bool? seeded = null)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -34,6 +35,11 @@ public class UserDbRepos
         if (!string.IsNullOrEmpty(userName))
         {
             query = query.Where(u => u.UserName.ToLower().Contains(userName));
+        }
+
+        if (seeded != null)
+        {
+            query = query.Where(u => u.Seeded == seeded);
         }
 
         var totalCount = await query.CountAsync();

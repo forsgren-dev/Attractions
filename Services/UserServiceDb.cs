@@ -16,8 +16,9 @@ public class UserServiceDb : IUserService
           int pageSize,
           int pageNumber,
           string userName = null,
-          bool showComments = false) =>
-          _repo.ReadAllAsync(pageSize, pageNumber, userName, showComments);
+          bool showComments = false,
+          bool? seeded = null) =>
+          _repo.ReadAllAsync(pageSize, pageNumber, userName, showComments, seeded);
 
     public Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id) => _repo.ReadUserAsync(id);
     public Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto item) => _repo.CreateUserAsync(item);

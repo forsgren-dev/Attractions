@@ -36,7 +36,8 @@ namespace AppWebApi.Controllers
             string city = null,
             string country = null,
             bool? hasComments = null,
-            bool showComments = false)
+            bool showComments = false,
+            bool? seeded = null)
         {
             try
             {
@@ -49,7 +50,8 @@ namespace AppWebApi.Controllers
                     city,
                     country,
                     hasComments,
-                    showComments);
+                    showComments,
+                    seeded);
 
                 _logger.LogInformation($"{nameof(ReadAttractions)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

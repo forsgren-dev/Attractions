@@ -20,7 +20,8 @@ public class CommentDbRepos
     public async Task<ResponsePageDto<CommentDto>> ReadCommentsAsync(
         int pageSize = 10,
         int pageNumber = 0,
-        Guid? id = null)
+        Guid? id = null,
+        bool? seeded = null)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -30,6 +31,11 @@ public class CommentDbRepos
         if (id != null)
         {
             query = query.Where(c => c.CommentId == id);
+        }
+
+        if (seeded != null)
+        {
+            query = query.Where(c => c.Seeded == seeded);
         }
 
         var totalCount = await query.CountAsync();

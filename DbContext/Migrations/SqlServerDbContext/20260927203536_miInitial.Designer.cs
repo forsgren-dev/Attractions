@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260927182546_miInitial")]
+    [Migration("20260927203536_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -141,11 +141,12 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasKey("CityId");
 
-                    b.HasIndex("CityName");
-
                     b.HasIndex("CountryDbMCountryId");
 
                     b.HasIndex("Seeded");
+
+                    b.HasIndex("CityName", "CountryDbMCountryId", "Seeded")
+                        .IsUnique();
 
                     b.ToTable("Cities", "supusr");
                 });

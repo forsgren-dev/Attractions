@@ -12,7 +12,8 @@ public interface IUserService
             int pageSize = 10,
             int pageNumber = 0,
             string userName = null,
-            bool showComments = false);
+            bool showComments = false,
+            bool? seeded = null);
       public Task<ResponseItemDto<UserDto>> ReadUserAsync(Guid id);
       public Task<ResponseItemDto<UserDto>> CreateUserAsync(UserCreateDto item);
       public Task<ResponseItemDto<UserDto>> DeleteUserAsync(Guid id);

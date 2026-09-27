@@ -20,8 +20,9 @@ public class AttractionServiceDb : IAttractionService
         string city = null,
         string country = null,
         bool? hasComments = null,
-        bool showComments = false) =>
-        _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country, hasComments, showComments);
+        bool showComments = false,
+        bool? seeded = null) =>
+        _repo.ReadAttractionsAsync(pageSize, pageNumber, attractionName, category, description, city, country, hasComments, showComments, seeded);
         
     public Task<ResponsePageDto<AttractionDto>> ReadAttractionsWithNoCommentsAsync(
         int pageSize,

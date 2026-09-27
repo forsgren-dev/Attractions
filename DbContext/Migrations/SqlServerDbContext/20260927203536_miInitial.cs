@@ -234,10 +234,11 @@ namespace DbContext.Migrations.SqlServerDbContext
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cities_CityName",
+                name: "IX_Cities_CityName_CountryDbMCountryId_Seeded",
                 schema: "supusr",
                 table: "Cities",
-                column: "CityName");
+                columns: new[] { "CityName", "CountryDbMCountryId", "Seeded" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cities_CountryDbMCountryId",

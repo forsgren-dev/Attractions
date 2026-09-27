@@ -35,7 +35,8 @@ public class AttractionDbRepos
         string city = null,
         string country = null,
         bool? hasComments = null,
-        bool showComments = false)
+        bool showComments = false,
+        bool? seeded = null)
     {
         pageSize = Math.Max(1, pageSize);
         pageNumber = Math.Max(0, pageNumber);
@@ -80,6 +81,11 @@ public class AttractionDbRepos
         else if (hasComments == false)
         {
             query = query.Where(a => !a.CommentDbM.Any());
+        }
+
+        if (seeded != null)
+        {
+            query = query.Where(a => a.Seeded == seeded);
         }
 
         var totalCount = await query.CountAsync();

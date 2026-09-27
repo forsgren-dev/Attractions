@@ -29,11 +29,12 @@ namespace AppWebApi.Controllers
         public async Task<IActionResult> ReadComments(
             int pageNumber = 0,
             int pageSize = 10,
-            Guid? id = null)
+            Guid? id = null,
+            bool? seeded = null)
         {
             try
             {
-                var result = await _service.ReadCommentsAsync(pageSize, pageNumber, id);
+                var result = await _service.ReadCommentsAsync(pageSize, pageNumber, id, seeded);
 
                 _logger.LogInformation($"{nameof(ReadComments)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}, Id: {id}");
                 return Ok(result);

@@ -31,11 +31,12 @@ namespace AppWebApi.Controllers
             int pageNumber = 0,
             int pageSize = 10,
             string userName = null,
-            bool showComments = false)
+            bool showComments = false,
+            bool? seeded = null)
         {
             try
             {
-                var result = await _service.ReadUsersAsync(pageSize, pageNumber, userName, showComments);
+                var result = await _service.ReadUsersAsync(pageSize, pageNumber, userName, showComments, seeded);
 
                 _logger.LogInformation($"{nameof(ReadUsers)} succeeded. PageSize: {pageSize}, PageNumber: {pageNumber}");
                 return Ok(result);

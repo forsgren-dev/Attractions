@@ -138,11 +138,12 @@ namespace DbContext.Migrations.SqlServerDbContext
 
                     b.HasKey("CityId");
 
-                    b.HasIndex("CityName");
-
                     b.HasIndex("CountryDbMCountryId");
 
                     b.HasIndex("Seeded");
+
+                    b.HasIndex("CityName", "CountryDbMCountryId", "Seeded")
+                        .IsUnique();
 
                     b.ToTable("Cities", "supusr");
                 });

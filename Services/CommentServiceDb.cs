@@ -13,8 +13,9 @@ public class CommentServiceDb : ICommentService
     public Task<ResponsePageDto<CommentDto>> ReadCommentsAsync(
         int pageSize = 10,
         int pageNumber = 0,
-        Guid? id = null) =>
-        _repo.ReadCommentsAsync(pageSize, pageNumber, id);
+        Guid? id = null,
+        bool? seeded = null) =>
+        _repo.ReadCommentsAsync(pageSize, pageNumber, id, seeded);
 
     public Task<ResponseItemDto<CommentDto>> CreateCommentAsync(CommentCreateDto item) =>
         _repo.CreateCommentAsync(item);
