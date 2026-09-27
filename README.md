@@ -11,7 +11,7 @@
 3. From _scripts (\Attractions\_scripts) run:
     .\database-rebuild-all.ps1 sql-attractions sqlserver docker root ..\AppWebApi
 
-4. Run the SQL-script: 
+4. Run the SQL-script adding View and Stored procedure etc: 
     \DbContext\SqlScripts\initDatabase.sql
 
 5. Start debugger.
