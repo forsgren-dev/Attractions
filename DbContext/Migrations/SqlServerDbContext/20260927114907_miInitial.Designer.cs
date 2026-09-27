@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations.SqlServerDbContext
 {
     [DbContext(typeof(MainDbContext.SqlServerDbContext))]
-    [Migration("20260921135324_miInitial")]
+    [Migration("20260927114907_miInitial")]
     partial class miInitial
     {
         /// <inheritdoc />
@@ -50,19 +50,23 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PostalCode")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("Seeded")
                         .HasColumnType("bit");
 
                     b.Property<string>("Street")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("AddressId");
 
                     b.HasIndex("CityDbMCityId");
 
                     b.HasIndex("Seeded");
+
+                    b.HasIndex("Street", "PostalCode", "CityDbMCityId")
+                        .IsUnique()
+                        .HasFilter("[Street] IS NOT NULL AND [PostalCode] IS NOT NULL");
 
                     b.ToTable("Addresses", "supusr");
                 });
@@ -73,14 +77,14 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AddressDbMAddressId")
+                    b.Property<Guid>("AddressDbMAddressId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AttractionDescription")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("AttractionName")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("Seeded")
                         .HasColumnType("bit");
@@ -103,7 +107,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CategoryName")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("CategoryType")
                         .HasColumnType("int");
@@ -123,16 +127,21 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CityName")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("CountryDbMCountryId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
 
                     b.HasKey("CityId");
 
                     b.HasIndex("CityName");
 
                     b.HasIndex("CountryDbMCountryId");
+
+                    b.HasIndex("Seeded");
 
                     b.ToTable("Cities", "supusr");
                 });
@@ -147,7 +156,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CommentText")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -155,7 +164,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<bool>("Seeded")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("UserDbMUserId")
+                    b.Property<Guid>("UserDbMUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CommentId");
@@ -176,11 +185,16 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CountryName")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("Seeded")
+                        .HasColumnType("bit");
 
                     b.HasKey("CountryId");
 
-                    b.HasIndex("CountryName")
+                    b.HasIndex("Seeded");
+
+                    b.HasIndex("CountryName", "Seeded")
                         .IsUnique()
                         .HasFilter("[CountryName] IS NOT NULL");
 
@@ -197,7 +211,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("UserId");
 
@@ -212,19 +226,19 @@ namespace DbContext.Migrations.SqlServerDbContext
 
             modelBuilder.Entity("Models.DTO.DbInfoDto", b =>
                 {
-                    b.Property<int>("NrCities")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NrCountries")
-                        .HasColumnType("int");
-
                     b.Property<int>("NrSeededAddresses")
                         .HasColumnType("int");
 
                     b.Property<int>("NrSeededAttractions")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrSeededCities")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrSeededComments")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrSeededCountries")
                         .HasColumnType("int");
 
                     b.Property<int>("NrSeededUsers")
@@ -236,7 +250,13 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.Property<int>("NrUnseededAttractions")
                         .HasColumnType("int");
 
+                    b.Property<int>("NrUnseededCities")
+                        .HasColumnType("int");
+
                     b.Property<int>("NrUnseededComments")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NrUnseededCountries")
                         .HasColumnType("int");
 
                     b.Property<int>("NrUnseededUsers")
@@ -277,7 +297,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     b.HasOne("DbModels.AddressDbM", "AddressDbM")
                         .WithMany()
-                        .HasForeignKey("AddressDbMAddressId");
+                        .HasForeignKey("AddressDbMAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("AddressDbM");
                 });
@@ -302,7 +324,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasOne("DbModels.UserDbM", "UserDbM")
                         .WithMany("CommentDbM")
                         .HasForeignKey("UserDbMUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("AttractionDbM");
 

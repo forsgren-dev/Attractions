@@ -20,7 +20,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryName = table.Column<string>(type: "varchar(200)", nullable: true),
+                    CategoryName = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     CategoryType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -34,7 +34,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CountryName = table.Column<string>(type: "varchar(200)", nullable: true)
+                    CountryName = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,7 +48,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "varchar(200)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -62,7 +63,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountryDbMCountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CityName = table.Column<string>(type: "varchar(200)", nullable: true)
+                    CityName = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,8 +85,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CityDbMCityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Street = table.Column<string>(type: "varchar(200)", nullable: true),
-                    PostalCode = table.Column<string>(type: "varchar(200)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    PostalCode = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -105,9 +107,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     AttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AddressDbMAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AttractionName = table.Column<string>(type: "varchar(200)", nullable: true),
-                    AttractionDescription = table.Column<string>(type: "varchar(200)", nullable: true),
+                    AddressDbMAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AttractionName = table.Column<string>(type: "nvarchar(200)", nullable: true),
+                    AttractionDescription = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -118,7 +120,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                         column: x => x.AddressDbMAddressId,
                         principalSchema: "supusr",
                         principalTable: "Addresses",
-                        principalColumn: "AddressId");
+                        principalColumn: "AddressId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -155,8 +158,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CommentText = table.Column<string>(type: "varchar(200)", nullable: true),
+                    UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CommentText = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Seeded = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -189,6 +192,14 @@ namespace DbContext.Migrations.SqlServerDbContext
                 schema: "supusr",
                 table: "Addresses",
                 column: "Seeded");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_Street_PostalCode_CityDbMCityId",
+                schema: "supusr",
+                table: "Addresses",
+                columns: new[] { "Street", "PostalCode", "CityDbMCityId" },
+                unique: true,
+                filter: "[Street] IS NOT NULL AND [PostalCode] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AttractionDbMCategoryDbM_CategoryDbMCategoryId",
@@ -234,6 +245,12 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "CountryDbMCountryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cities_Seeded",
+                schema: "supusr",
+                table: "Cities",
+                column: "Seeded");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_AttractionDbMAttractionId",
                 schema: "supusr",
                 table: "Comments",
@@ -252,12 +269,18 @@ namespace DbContext.Migrations.SqlServerDbContext
                 column: "UserDbMUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Countries_CountryName",
+                name: "IX_Countries_CountryName_Seeded",
                 schema: "supusr",
                 table: "Countries",
-                column: "CountryName",
+                columns: new[] { "CountryName", "Seeded" },
                 unique: true,
                 filter: "[CountryName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Countries_Seeded",
+                schema: "supusr",
+                table: "Countries",
+                column: "Seeded");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Seeded",

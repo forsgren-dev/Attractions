@@ -57,6 +57,7 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<CommentDbM>()
             .HasOne(c => c.UserDbM)
             .WithMany(u => u.CommentDbM)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         #endregion
@@ -87,7 +88,7 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<decimal>().HaveColumnType("money");
-            configurationBuilder.Properties<string>().HaveColumnType("varchar(200)");
+            configurationBuilder.Properties<string>().HaveColumnType("nvarchar(200)");
 
             base.ConfigureConventions(configurationBuilder);
         }

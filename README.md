@@ -1,15 +1,23 @@
 
-- Build database - 
+Assignment in ASP.NET/EF Core by Erik Forsgren
 
-From _scripts (\Attractions\_scripts) run:
+
+- How to build database (default is MSSQL) - 
+
+1. Start Docker
+
+2. From _scripts (\Attractions\_scripts) run:
     .\database-rebuild-all.ps1 sql-attractions sqlserver docker root ..\AppWebApi
 
-Run SQL-script: 
+3. Run the SQL-script: 
     \DbContext\SqlScripts\initDatabase.sql
 
-Start debugger.
+4. Start debugger.
 
-Seed database from the api/Admin/SeedDatabase endpoiont.
+5. Seed database from the api/Admin/SeedDatabase endpoiont.
+
+
+I based the DB-design on my previous assignment in SQL. Tables for  
 
 With the built-in seed source, the seeder creates all 110 cities and 4 countries as seeded data. Real addresses use separate city and country records, even when the names match. Removing seeded data also removes seeded cities and countries while preserving real ones.
 

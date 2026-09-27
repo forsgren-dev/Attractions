@@ -44,6 +44,7 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
         set => throw new NotImplementedException();
     }
     #region foreign key
+    [Required]
     public AddressDbM AddressDbM { get; set; }
 
     #endregion
