@@ -119,7 +119,7 @@ namespace AppWebApi.Controllers
 
         [HttpGet()]
         [ActionName("ReadItemDto")]
-        [ProducesResponseType(200, Type = typeof(ResponseItemDto<AttractionUpdateDto>))]
+        [ProducesResponseType(200, Type = typeof(AttractionUpdateDto))]
         [ProducesResponseType(400, Type = typeof(string))]
         [ProducesResponseType(404, Type = typeof(string))]
         public async Task<IActionResult> ReadItemDto(Guid id)
@@ -133,7 +133,7 @@ namespace AppWebApi.Controllers
                 if (resp.Item is null)
                     return NotFound($"No attraction found with id {id}");
 
-                return Ok(resp);
+                return Ok(resp.Item);
             }
             catch (Exception ex)
             {
