@@ -243,9 +243,6 @@ public class AttractionDbRepos
 
             item.CommentsPage = new ResponsePageDto<CommentDto>
             {
-#if DEBUG
-                ConnectionString = _dbContext.dbConnection,
-#endif
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
