@@ -18,8 +18,8 @@ namespace AppWebApi.Controllers
         [ProducesResponseType(typeof(ResponsePageDto<CategoryDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> ReadCategories(
-            int pageSize = 10,
             int pageNumber = 0,
+            int pageSize = 10,
             string categoryName = null)
         {
             try

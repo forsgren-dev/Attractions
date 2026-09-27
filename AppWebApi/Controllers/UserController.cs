@@ -28,8 +28,8 @@ namespace AppWebApi.Controllers
         [ProducesResponseType(typeof(ResponsePageDto<UserDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> ReadUsers(
-            int pageSize = 10,
             int pageNumber = 0,
+            int pageSize = 10,
             string userName = null,
             bool showComments = false)
         {

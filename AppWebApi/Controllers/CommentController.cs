@@ -27,8 +27,8 @@ namespace AppWebApi.Controllers
         [ProducesResponseType(typeof(ResponsePageDto<CommentDto>), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> ReadComments(
-            int pageSize = 10,
             int pageNumber = 0,
+            int pageSize = 10,
             Guid? id = null)
         {
             try
