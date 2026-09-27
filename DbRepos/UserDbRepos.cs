@@ -47,6 +47,8 @@ public class UserDbRepos
         if (showComments)
         {
             var users = await query
+                .OrderBy(u => u.UserName)
+                .ThenBy(u => u.UserId)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
                 .Select(u => new UserDto
@@ -81,6 +83,8 @@ public class UserDbRepos
         else
         {
             var users = await query
+                .OrderBy(u => u.UserName)
+                .ThenBy(u => u.UserId)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
                 .Select(u => new UserDto
