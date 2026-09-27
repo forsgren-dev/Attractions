@@ -37,7 +37,7 @@ In the Swagger UI there are some endpoints that give the same result. This is be
 
 The Guest/Info endpoint shows an overview of the database content and uses the database view gstusr.vwDbInfo. The Admin/RemoveSeededData endpoint removes seeded test data and uses the stored procedure supusr.spDeleteAll.
 
-I made separe DTO:s for create and update. This is only because I kept forgetting to set the entity id to NULL everytime I created a user, attraction or comment. With a separate create DTO I can leave out the id from the body. With a frontend this would not be an issue and I get the principle of using a combined DTO, so this sollution is purely for my own sanity using Swagger.
+I made separe DTO:s for create and update. This is only because I kept forgetting to set the entity id to NULL everytime I created a user, attraction or comment. With a separate create DTO I can leave out the id from the body. With a frontend this would not be an issue and I get the principle of using a combined DTO, so this solution is purely for my own sanity using Swagger.
 
 ## ABOUT ATTRACTION CATEGORIES
 I decided that attractions should require at least one category in the API. I imagine with a user-interface I'd have checkboxes or something to select at least one. There would ofcourse be an "Other" category then, but there are no such option in this project. So when creating an attraction, first use the ReadCategories endpoint to list the available category id:s. At least one of them is needed in the create attraction body. I did not include the join table for the relations between Attractions and Categories in the ERD diagram but it is shown in the auto-visualization made by VS Code.
