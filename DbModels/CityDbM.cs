@@ -8,7 +8,7 @@ using Models;
 
 namespace DbModels;
 
-[Index(nameof(CityName))]
+[Index(nameof(CityName), nameof(CountryDbMCountryId), nameof(Seeded), IsUnique = true)]
 [Index(nameof(Seeded))]
 [Table("Cities", Schema = "supusr")]
 public class CityDbM : City, IEquatable<CityDbM>, ISeed<CityDbM>
@@ -27,7 +27,11 @@ public class CityDbM : City, IEquatable<CityDbM>, ISeed<CityDbM>
         set => throw new NotImplementedException();
     }
     #region foreign key
+    [JsonIgnore]
+    public Guid CountryDbMCountryId { get; set; }
+
     [Required]
+    [ForeignKey(nameof(CountryDbMCountryId))]
     public CountryDbM CountryDbM { get; set; }
     
     #endregion
