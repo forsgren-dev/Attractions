@@ -72,7 +72,7 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Seido Friends API v2.0");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Forsgrens Attractions API v1.0");
     });
 }
 
