@@ -149,7 +149,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AttractionDbMAttractionId")
+                    b.Property<Guid>("AttractionDbMAttractionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CommentText")
@@ -316,7 +316,9 @@ namespace DbContext.Migrations.SqlServerDbContext
                 {
                     b.HasOne("DbModels.AttractionDbM", "AttractionDbM")
                         .WithMany("CommentDbM")
-                        .HasForeignKey("AttractionDbMAttractionId");
+                        .HasForeignKey("AttractionDbMAttractionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DbModels.UserDbM", "UserDbM")
                         .WithMany("CommentDbM")

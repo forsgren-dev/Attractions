@@ -157,7 +157,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                 columns: table => new
                 {
                     CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AttractionDbMAttractionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserDbMUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CommentText = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -171,7 +171,8 @@ namespace DbContext.Migrations.SqlServerDbContext
                         column: x => x.AttractionDbMAttractionId,
                         principalSchema: "supusr",
                         principalTable: "Attractions",
-                        principalColumn: "AttractionId");
+                        principalColumn: "AttractionId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserDbMUserId",
                         column: x => x.UserDbMUserId,

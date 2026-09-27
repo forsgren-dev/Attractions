@@ -60,6 +60,12 @@ public class MainDbContext : Microsoft.EntityFrameworkCore.DbContext
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<CommentDbM>()
+            .HasOne(c => c.AttractionDbM)
+            .WithMany(a => a.CommentDbM)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
         #endregion
 
         base.OnModelCreating(modelBuilder);
