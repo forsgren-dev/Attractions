@@ -2,6 +2,10 @@
 ## Assignment in ASP.NET/EF Core by Erik Forsgren
 
 
+## GITHUB REPO LINK: 
+https://github.com/forsgren-dev/Attractions
+
+
 ## How to build database (I am using MSSQL) - 
 
 1. Start Docker
@@ -21,7 +25,7 @@
 ## ABOUT THE PROJECT
 I based the DB-design on my previous assignment in SQL and the ASP.NET/EF Core structure on the tutorial code model from SEIDO. In this project I normalized addresses into their own table instead of including them in Attractions. This makes the database cleaner because addresses belongs in their own entities. 
 
-Addresses are indexed by street, postalcode and city to create unique address entities. Howerver, street and postalcode may be null, so multiple attractions can have the same address with only a city and country in them. This is because large nature areas, like Grand Canyon, might not have an actual street address. They do have a closest city and belong to a country tho. But there can't be two cities with the same name in the same country with the same seeded flag, This is because I indexed city name, country and seeded together as unique. There can be only one Stockholm in Sweden that is seeded, and one undseeded. But there can also be a Stockholm in the USA. This project allows only one attraction per full unique address. 
+Addresses are indexed by street, postalcode and city to create unique address entities. However, street and postalcode may be null, so multiple attractions can have the same address with only a city and country in them. This is because large nature areas, like Grand Canyon, might not have an actual street address. They do have a closest city and belong to a country tho. But there can't be two cities with the same name in the same country with the same seeded flag, This is because I indexed city name, country and seeded together as unique. There can be only one Stockholm in Sweden that is seeded, and one undseeded. But there can also be a Stockholm in the USA. This project allows only one attraction per full unique address. 
 
 All tables except Categories are indexed on the Seeded flag, since this is used for finding what to delete when removing seeded data. The table Attractions is also indexed by AttractionName due to the probability that it will be used to find an attraction, and the table Users is indexed on UserName to force them to be unique. 
 
