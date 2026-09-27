@@ -78,9 +78,11 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AttractionDescription")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("AttractionName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("Seeded")
@@ -104,6 +106,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("CategoryType")
@@ -124,6 +127,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CityName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<Guid>("CountryDbMCountryId")
@@ -153,6 +157,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CommentText")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -182,6 +187,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CountryName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("Seeded")
@@ -192,8 +198,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasIndex("Seeded");
 
                     b.HasIndex("CountryName", "Seeded")
-                        .IsUnique()
-                        .HasFilter("[CountryName] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Countries", "supusr");
                 });
@@ -208,6 +213,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("UserId");
@@ -215,8 +221,7 @@ namespace DbContext.Migrations.SqlServerDbContext
                     b.HasIndex("Seeded");
 
                     b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Users", "supusr");
                 });

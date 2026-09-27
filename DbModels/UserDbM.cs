@@ -18,6 +18,9 @@ public class UserDbM : User, ISeed<UserDbM>
  [Key]
     public override Guid UserId { get; set; }
 
+    [Required]
+    public override string UserName { get; set; }
+
     [NotMapped]
     public override List<IComment> Comments
     {

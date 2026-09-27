@@ -17,6 +17,9 @@ public class CityDbM : City, IEquatable<CityDbM>, ISeed<CityDbM>
     [Key]
     public override Guid CityId { get; set; }
 
+    [Required]
+    public override string CityName { get; set; }
+
     [NotMapped]
     public override ICountry Country
     {

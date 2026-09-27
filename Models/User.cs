@@ -6,7 +6,7 @@ public class User : IUser, ISeed<User>
 {
 
     public virtual Guid UserId { get; set; }
-    public string UserName { get; set; }
+    public virtual string UserName { get; set; }
 
     public virtual List<IComment> Comments { get; set; }
     public bool Seeded { get; set; } = false;

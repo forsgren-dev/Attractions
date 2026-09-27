@@ -6,7 +6,7 @@ public class City : ICity, ISeed<City>
 {
 
     public virtual Guid CityId { get; set; }
-    public string CityName { get; set; }
+    public virtual string CityName { get; set; }
 
     public virtual ICountry Country { get; set; }
 

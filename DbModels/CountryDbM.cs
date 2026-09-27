@@ -17,6 +17,9 @@ public class CountryDbM : Country, IEquatable<CountryDbM>, ISeed<CountryDbM>
  [Key]
     public override Guid CountryId { get; set; }
 
+    [Required]
+    public override string CountryName { get; set; }
+
     [NotMapped]
     public override List<ICity> Cities
     {

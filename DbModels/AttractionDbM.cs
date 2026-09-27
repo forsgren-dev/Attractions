@@ -17,6 +17,12 @@ public class AttractionDbM : Attraction, ISeed<AttractionDbM>
     [Key]
     public override Guid AttractionId { get; set; }
 
+    [Required]
+    public override string AttractionName { get; set; }
+
+    [Required]
+    public override string AttractionDescription { get; set; }
+
     [NotMapped]
     public override List<ICategory> Categories
 

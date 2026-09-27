@@ -16,6 +16,9 @@ public class CommentDbM : Comment, ISeed<CommentDbM>
     [Key]
     public override Guid CommentId { get; set; }
 
+    [Required]
+    public override string CommentText { get; set; }
+
     [NotMapped]
     public override IAttraction Attraction
     {

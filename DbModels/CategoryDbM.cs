@@ -15,6 +15,7 @@ public class CategoryDbM : Category, IEquatable<CategoryDbM>
  [Key]
     public override Guid CategoryId { get; set; }
 
+    [Required]
     public string CategoryName
     {
         get => CategoryType.ToString();

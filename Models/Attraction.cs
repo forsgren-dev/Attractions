@@ -8,8 +8,8 @@ public class Attraction : IAttraction, ISeed<Attraction>
 {
 
     public virtual Guid AttractionId { get; set; }
-    public string AttractionName { get; set; }
-    public string AttractionDescription { get; set; }
+    public virtual string AttractionName { get; set; }
+    public virtual string AttractionDescription { get; set; }
     public virtual List<ICategory> Categories { get; set; } = new();
 
     public virtual IAddress Address { get; set; }
